@@ -71,16 +71,16 @@
                 <li>• <strong>Complejos:</strong> Paquetes premium de marketing y analytics</li>
                 <li>• <strong>Profesores:</strong> Comisión del 15% en clases</li>
                 <li>• <strong>Marketplace:</strong> Margen 30–40% en productos</li>
-                <li>• <strong>Marcas:</strong> Publicidad segmentada (no invasiva)</li>
+                <li>• <strong>Marcas:</strong> Publicidad segmentada</li>
               </ul>
             </div>
             <div className="stat-card bg-white p-6 rounded-xl">
               <h3 className="font-bold text-xl mb-3 text-orange-custom">Valor para Complejos</h3>
               <ul className="space-y-2">
                 <li>• Aumento de ocupación en horarios valle</li>
-                <li>• Retención de clientes con ligas y torneos</li>
-                <li>• No pierden ingresos: descuentos los cubre la plataforma</li>
-                <li>• Panel de analytics + herramientas de marketing integradas</li>
+                <li>• Retención con ligas y torneos</li>
+                <li>• Descuentos cubiertos por la plataforma</li>
+                <li>• Panel de analytics + marketing integrado</li>
               </ul>
             </div>
           </div>
@@ -112,22 +112,26 @@
         </div>
       );
 
-      // === PROYECCIONES DE GANANCIAS ===
+      // === PROYECCIONES DETALLADAS ===
       const renderProyecciones = () => {
         const proyecciones = [
-          { año: "Año 1", ingresos: "$13.2M", usuarios: "18,000" },
-          { año: "Año 2", ingresos: "$32M", usuarios: "42,000" },
-          { año: "Año 3", ingresos: "$58M", usuarios: "75,000" }
+          { año: "Año 1", usuarios: "18,000", ingresos: "$13.2M ARS", jueganXmes: "~6.4 turnos", penetracion: "21%" },
+          { año: "Año 2", usuarios: "42,000", ingresos: "$32M ARS", jueganXmes: "~6.1 turnos", penetracion: "29%" },
+          { año: "Año 3", usuarios: "75,000", ingresos: "$58M ARS", jueganXmes: "~5.8 turnos", penetracion: "33%" }
         ];
+
         return (
-          <div className="space-y-8">
+          <div className="space-y-10">
             <h2 className="text-4xl font-black text-center text-orange-custom">Proyecciones de Ingresos</h2>
+
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white border border-gray-300 rounded-xl shadow-md">
                 <thead className="bg-orange-custom text-white">
                   <tr>
                     <th className="py-3 px-4">Año</th>
                     <th className="py-3 px-4">Usuarios Activos</th>
+                    <th className="py-3 px-4">Penetración</th>
+                    <th className="py-3 px-4">Turnos/mes por jugador</th>
                     <th className="py-3 px-4">Ingresos Anuales</th>
                   </tr>
                 </thead>
@@ -136,17 +140,41 @@
                     <tr key={i} className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}>
                       <td className="py-3 px-4 font-bold">{p.año}</td>
                       <td className="py-3 px-4">{p.usuarios}</td>
+                      <td className="py-3 px-4">{p.penetration}</td>
+                      <td className="py-3 px-4">{p.jueganXmes}</td>
                       <td className="py-3 px-4 font-black text-orange-custom">{p.ingresos}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="text-2xl font-bold text-orange-custom mb-4">Desglose de Ingresos – Año 1</h3>
+              <ul className="space-y-2 text-lg">
+                <li><strong>Reservas (10% comisión):</strong> $8.58M ARS (65%)</li>
+                <li><strong>Marketplace (margen 35%):</strong> $2.64M ARS (20%)</li>
+                <li><strong>Clases (15% comisión):</strong> $1.58M ARS (12%)</li>
+                <li><strong>Publicidad + Complejos:</strong> $0.4M ARS (3%)</li>
+              </ul>
+            </div>
+
+            <Accordion title="Supuestos clave" defaultOpen={true}>
+              <ul className="list-disc pl-6 space-y-2">
+                <li><strong>Base de jugadores:</strong> 18,000 activos en Misiones (2025)</li>
+                <li><strong>Frecuencia promedio:</strong> 1.5 veces por semana → ~6.4 turnos/mes</li>
+                <li><strong>Ticket promedio por turno:</strong> $8,500 ARS</li>
+                <li><strong>Penetración plataforma:</strong> 21% en Año 1 (3,800 jugadores pagos)</li>
+                <li><strong>Comisión promedio efectiva:</strong> ~10% (los descuentos los absorbe la plataforma)</li>
+                <li><strong>Ingreso adicional por jugador:</strong> $1,200 ARS/mes (marketplace, clases, torneos)</li>
+                <li><strong>Premios:</strong> nunca en efectivo → evita regulaciones (solo créditos, productos o servicios)</li>
+              </ul>
+            </Accordion>
           </div>
         );
       };
 
-      // === FLUJOS COMPLETOS ===
+      // === FLUJOS ===
       const flujos = [
         { titulo: "1. Reserva Individual o Dupla Tradicional", contenido: (
           <ol className="list-decimal pl-8 space-y-2">
@@ -182,16 +210,40 @@
         { titulo: "12. Clases y Clinics", contenido: "Directorio de profesores → clases individuales/grupales → planes progresivos → reseñas." }
       ];
 
+      // === CARACTERÍSTICAS DETALLADAS ===
+      const caracteristicas = [
+        "Matchmaking Inteligente con IA (nivel, horario, estilo, ubicación)",
+        "Torneos con brackets automáticos y premios en créditos/productos",
+        "Ligas zonales con ascenso/descenso y rankings semanales",
+        "Misiones diarias y sistema de XP + niveles + badges + monedas virtuales",
+        "Feed social con resultados, fotos, videos y check-ins",
+        "Chat grupal integrado con encuestas, votación y ubicación en vivo",
+        "Precios dinámicos (pico/valle, clima, anticipación, ocupación)",
+        "Reservas recurrentes, lista de espera, extender turno en vivo",
+        "Check-in con QR + penalización por no-show + reputación",
+        "Marketplace integrado (retiro en partido, envío, reviews)",
+        "Clases con profesores certificados y planes progresivos",
+        "Panel admin para complejos (analytics, marketing, inventario, empleados)",
+        "Publicidad segmentada para marcas (banner, posts, push)",
+        "Verificación con DNI y badge de perfil verificado",
+        "Sistema de amigos y crews (duplas permanentes con estadísticas)",
+        "Gamificación completa (misiones, logros, desafíos, retos)",
+        "Estadísticas avanzadas (frecuencia, socios frecuentes, rendimiento)",
+        "Historial de partidos con reviews mutuas y fotos",
+        "Calificación de puntualidad y fair play",
+        "Pagos divididos automáticos vía Mercado Pago"
+      ];
+
       // === PROYECTO COMPLETO ===
       const renderProyecto = () => (
         <div className="space-y-8">
           <h2 className="text-4xl font-black text-orange-custom">Proyecto Completo</h2>
 
           <div className="flex flex-wrap gap-2 border-b-2 border-orange-custom pb-2">
-            {['flujos', 'monetizacion', 'expansion', 'premios'].map(t => (
+            {['flujos', 'caracteristicas', 'monetizacion', 'expansion', 'premios'].map(t => (
               <button key={t} onClick={() => setSubTab(t)}
                 className={`px-5 py-2 font-bold rounded-t-lg ${subTab === t ? 'bg-orange-custom text-white' : 'bg-gray-200 hover:bg-gray-300'}`}>
-                {t === 'flujos' ? '12 Flujos' : t === 'monetizacion' ? 'Monetización' : t === 'expansion' ? 'Expansión' : 'Premios'}
+                {t === 'flujos' ? '12 Flujos' : t === 'caracteristicas' ? 'Características' : t === 'monetizacion' ? 'Monetización' : t === 'expansion' ? 'Expansión' : 'Premios'}
               </button>
             ))}
           </div>
@@ -207,6 +259,22 @@
             </div>
           )}
 
+          {subTab === 'caracteristicas' && (
+            <div>
+              <h3 className="text-3xl font-bold text-orange-custom mb-6">Características Clave</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                {caracteristicas.map((f, i) => (
+                  <div key={i} className="flex items-start p-4 bg-orange-50 rounded-lg border border-orange-200">
+                    <span className="feature-icon text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                      <i className="fas fa-check"></i>
+                    </span>
+                    <span>{f}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {subTab === 'monetizacion' && (
             <div className="grid md:grid-cols-2 gap-4">
               {[
@@ -214,7 +282,7 @@
                 "Suscripciones premium para complejos: $5,000 ARS/mes",
                 "Comisión 15% en clases con profesores verificados",
                 "Marketplace propio: margen 30–40% en productos",
-                "Publicidad segmentada para marcas: banners, posts patrocinados, notificaciones"
+                "Publicidad segmentada para marcas: banners, posts patrocinados"
               ].map((item, i) => (
                 <div key={i} className="flex items-start p-4 bg-orange-50 rounded-lg border border-orange-200">
                   <span className="feature-icon text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
@@ -230,7 +298,7 @@
             <div className="space-y-4">
               <h3 className="text-2xl font-bold text-orange-custom">Estrategia de Expansión</h3>
               <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Fase 1:</strong> Consolidación en toda la provincia de Misiones (Posadas, Oberá, Iguazú, Eldorado)</li>
+                <li><strong>Fase 1:</strong> Consolidación en toda Misiones (Posadas, Oberá, Iguazú, Eldorado)</li>
                 <li><strong>Fase 2:</strong> Escalado a provincias vecinas (Corrientes, Chaco, Formosa)</li>
                 <li><strong>Fase 3:</strong> Multi-deporte: misma arquitectura para tenis, fútbol 5, pickleball</li>
                 <li>Soporte para apps separadas o plataforma unificada con filtro deportivo</li>
