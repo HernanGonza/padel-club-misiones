@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Padel Club Misiones – Plataforma Integral de Pádel</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .bg-orange-custom { background-color: #EB632E; }
+    .text-orange-custom { color: #EB632E; }
+    .border-orange-custom { border-color: #EB632E; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .stat-card { box-shadow: 0 4px 20px rgba(235, 99, 46, 0.15); }
+    .feature-icon { background: linear-gradient(135deg, #EB632E, #f97316); }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    // === ACORDEÓN ===
+    const Accordion = ({ title, children, defaultOpen = false }) => {
+      const [open, setOpen] = useState(defaultOpen);
+      return (
+        <div className="border border-gray-200 rounded-xl mb-4 overflow-hidden">
+          <button
+            onClick={() => setOpen(!open)}
+            className="w-full px-6 py-4 text-left font-bold text-lg bg-orange-50 hover:bg-orange-100 flex justify-between items-center"
+          >
+            {title}
+            <span className="text-xl">{open ? '−' : '+'}</span>
+          </button>
+          {open && (
+            <div className="p-5 bg-white border-t border-gray-200 text-base leading-relaxed">
+              {children}
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // === APP ===
+    const App = () => {
+      const [tab, setTab] = useState('resumen');
+      const [subTab, setSubTab] = useState('flujos');
+
+      const tabs = ['resumen', 'mercado', 'proyecciones', 'proyecto', 'tecnologia'];
+
+      // === RESUMEN COMERCIAL ===
+      const renderResumen = () => (
+        <div className="space-y-12">
+          <div className="text-center max-w-4xl mx-auto">
+            <h1 className="text-5xl font-black text-orange-custom mb-6">Padel Club Misiones</h1>
+            <p className="text-2xl text-gray-700 mb-10">
+              La primera plataforma integral de pádel en Misiones: matchmaking, reservas, torneos, ligas, marketplace y más — todo en una sola app.
+            </p>
+            <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-8 py-5 rounded-xl inline-block shadow-xl">
+              <p className="text-2xl font-bold">+18.000 jugadores activos · 28 complejos afiliados</p>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="stat-card bg-white p-6 rounded-xl text-center">
+              <div className="text-4xl mb-3">🎯</div>
+              <h3 className="font-bold text-xl mb-2">Problema</h3>
+              <p className="text-gray-600">
+                Los jugadores no encuentran compañeros compatibles. Los complejos operan con baja ocupación y poca visibilidad digital.
+              </p>
+            </div>
+            <div className="stat-card bg-white p-6 rounded-xl text-center">
+              <div className="text-4xl mb-3">💡</div>
+              <h3 className="font-bold text-xl mb-2">Solución</h3>
+              <p className="text-gray-600">
+                Plataforma todo-en-uno con IA para emparejar jugadores, optimizar precios y conectar a toda la comunidad de pádel.
+              </p>
+            </div>
+            <div className="stat-card bg-white p-6 rounded-xl text-center">
+              <div className="text-4xl mb-3">📱</div>
+              <h3 className="font-bold text-xl mb-2">Funcionalidad</h3>
+              <p className="text-gray-600">
+                Reservas, matchmaking, torneos, ligas, misiones, feed social, marketplace y clases integradas.
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+
+      // === MERCADO ===
+      const renderMercado = () => (
+        <div className="space-y-8">
+          <h2 className="text-4xl font-black text-center text-orange-custom">Análisis de Mercado – Misiones</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="text-2xl font-bold mb-4 text-orange-custom">Demanda</h3>
+              <ul className="space-y-2 text-lg">
+                <li>• +18.000 jugadores activos en Posadas</li>
+                <li>• Crecimiento del 35% anual</li>
+                <li>• 68% busca compañeros frecuentemente</li>
+              </ul>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="text-2xl font-bold mb-4 text-orange-custom">Oferta</h3>
+              <ul className="space-y-2 text-lg">
+                <li>• 28 complejos operativos</li>
+                <li>• Ocupación promedio: 58%</li>
+                <li>• Cero plataformas locales de matchmaking</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      );
+
+      // === PROYECCIONES (solo ingresos) ===
+      const renderProyecciones = () => {
+        const proyecciones = [
+          { año: "Año 1", ingresos: "$13.2M", usuarios: "18,000" },
+          { año: "Año 2", ingresos: "$32M", usuarios: "42,000" },
+          { año: "Año 3", ingresos: "$58M", usuarios: "75,000" }
+        ];
+        return (
+          <div className="space-y-10">
+            <h2 className="text-4xl font-black text-center text-orange-custom">Proyecciones de Ingresos</h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white border border-gray-300 rounded-xl shadow-md">
+                <thead className="bg-orange-custom text-white">
+                  <tr>
+                    <th className="py-4 px-4">Año</th>
+                    <th className="py-4 px-4">Usuarios Activos</th>
+                    <th className="py-4 px-4">Ingresos Anuales</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {proyecciones.map((p, i) => (
+                    <tr key={i} className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+                      <td className="py-4 px-4 font-bold">{p.año}</td>
+                      <td className="py-4 px-4">{p.usuarios}</td>
+                      <td className="py-4 px-4 font-black text-orange-custom">{p.ingresos}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      };
+
+      // === FLUJOS COMPLETOS ===
+      const flujos = [
+        {
+          titulo: "1. Reserva Individual o Dupla Tradicional",
+          contenido: (
+            <ol className="list-decimal pl-8 space-y-2">
+              <li>Buscás canchas por zona, fecha y hora</li>
+              <li>Filtrás por precio, tipo de cancha, techada/descubierta, valoraciones</li>
+              <li>Ves precios dinámicos (pico +30%, valle -40%, anticipada, último minuto)</li>
+              <li>Elegís única o recurrente (todos los martes 20 hs)</li>
+              <li>Pagás con Mercado Pago</li>
+              <li>Recibís QR + recordatorios automáticos</li>
+              <li>Check-in al llegar</li>
+            </ol>
+          )
+        },
+        {
+          titulo: "2. Tengo cancha, busco 1-3 jugadores",
+          contenido: (
+            <ol className="list-decimal pl-8 space-y-2">
+              <li>Reservás la cancha</li>
+              <li>Marcás “Buscar compañeros”</li>
+              <li>Indicás cuántos faltan, posición (drive/revés), nivel y costo por persona</li>
+              <li>Se publica en el feed</li>
+              <li>IA sugiere jugadores y envía notificaciones push</li>
+              <li>Aceptás/rechazás según perfil verificado</li>
+              <li>Chat grupal automático + pagos divididos</li>
+            </ol>
+          )
+        },
+        {
+          titulo: "3. Quiero jugar, busco partido abierto",
+          contenido: "Navegas feed → filtrás → ves jugadores ya confirmados → te unís → pagás tu parte → entrás al chat y QR."
+        },
+        {
+          titulo: "4. Crear Equipo Permanente",
+          contenido: "Nombre + logo → dupla fija → estadísticas → desafiar rivales → ligas como equipo."
+        },
+        {
+          titulo: "5. Emparejamiento Automático",
+          contenido: "Activás “Quiero jugar” → IA cruza horarios, nivel y ubicación → te propone partidos perfectos."
+        },
+        {
+          titulo: "6. Inscripción a Torneos",
+          contenido: "Complejo crea torneo → inscribís sola o con compañero → IA sugiere pareja → brackets automáticos → premios vía Mercado Pago."
+        },
+        {
+          titulo: "7. Ligas Zonales",
+          contenido: "Puntos por partido → ranking semanal → ascenso/descenso → premios de temporada."
+        },
+        {
+          titulo: "8. Misiones Diarias/Semanales",
+          contenido: "Ejemplos: Juega hoy → 200 XP, Juega en horario valle → 20% off, Invita amigo → 500 XP."
+        },
+        {
+          titulo: "9. Feed Social",
+          contenido: "Publicás resultados, fotos, videos → likes, comentarios, check-ins."
+        },
+        {
+          titulo: "10. Gestión Flexible de Reservas",
+          contenido: "Recurrentes, lista de espera, extender turno en vivo, cambio de horario, swap y subarriendo."
+        },
+        {
+          titulo: "11. Marketplace",
+          contenido: "Paletas, pelotas, ropa → retiro en próximo partido o envío → reseñas y bundles."
+        },
+        {
+          titulo: "12. Clases y Clinics",
+          contenido: "Directorio de profesores → clases individuales/grupales → planes progresivos → reseñas."
+        }
+      ];
+
+      // === PROYECTO COMPLETO ===
+      const renderProyecto = () => (
+        <div className="space-y-8">
+          <h2 className="text-4xl font-black text-orange-custom">Proyecto Completo</h2>
+
+          <div className="flex flex-wrap gap-2 border-b-2 border-orange-custom pb-2">
+            {['flujos', 'funcionalidades', 'stack', 'infra'].map(t => (
+              <button key={t} onClick={() => setSubTab(t)}
+                className={`px-5 py-2 font-bold rounded-t-lg ${subTab === t ? 'bg-orange-custom text-white' : 'bg-gray-200 hover:bg-gray-300'}`}>
+                {t === 'flujos' ? '12 Flujos' : t === 'funcionalidades' ? 'Funcionalidades' : t === 'stack' ? 'Stack' : 'Infra'}
+              </button>
+            ))}
+          </div>
+
+          {subTab === 'flujos' && (
+            <div>
+              <h3 className="text-3xl font-bold text-orange-custom mb-6">Flujos de Usuario</h3>
+              {flujos.map((f, i) => (
+                <Accordion key={i} title={f.titulo} defaultOpen={i < 3}>
+                  {f.contenido}
+                </Accordion>
+              ))}
+            </div>
+          )}
+
+          {subTab === 'funcionalidades' && (
+            <div>
+              <h3 className="text-3xl font-bold text-orange-custom mb-6">Funcionalidades Clave</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                {[
+                  "Matchmaking inteligente con IA",
+                  "Torneos con brackets automáticos",
+                  "Ligas con ascenso/descenso",
+                  "Misiones diarias + XP + niveles",
+                  "Feed social y check-ins",
+                  "Chat grupal con encuestas",
+                  "Precios dinámicos (clima, horario, ocupación)",
+                  "Reservas recurrentes y lista de espera",
+                  "Extender turno en vivo",
+                  "Check-in con QR + penalización no-show",
+                  "Marketplace con retiro en partido",
+                  "Clases con profesores certificados",
+                  "Verificación con DNI",
+                  "Panel admin para complejos",
+                  "Marketing automático por clima y last-minute",
+                  "Pagos divididos automáticos",
+                  "Gamificación completa",
+                  "Estadísticas avanzadas y reputación"
+                ].map((f, i) => (
+                  <div key={i} className="flex items-start p-4 bg-orange-50 rounded-lg border border-orange-200">
+                    <span className="feature-icon text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                      <i className="fas fa-check"></i>
+                    </span>
+                    <span>{f}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {subTab === 'stack' && (
+            <div className="text-center space-y-4">
+              <p className="text-2xl"><strong>Web:</strong> Next.js 14 + Tailwind CSS</p>
+              <p className="text-2xl"><strong>Mobile:</strong> React Native + Expo</p>
+              <p className="text-2xl"><strong>Backend:</strong> Supabase (PostgreSQL, Auth, Storage, Edge Functions)</p>
+            </div>
+          )}
+
+          {subTab === 'infra' && (
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="text-2xl font-bold mb-4 text-orange-custom">Infraestructura</h3>
+              <ul className="space-y-2 text-lg">
+                <li>• Web: Vercel</li>
+                <li>• Backend: Supabase</li>
+                <li>• Mobile: Expo EAS</li>
+                <li>• Costo estimado inicial: ~$230 USD/mes</li>
+              </ul>
+            </div>
+          )}
+        </div>
+      );
+
+      const renderTecnologia = () => (
+        <div className="text-center space-y-8">
+          <h2 className="text-4xl font-black text-orange-custom">Tecnología Moderna y Escalable</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white p-6 rounded-xl shadow">
+              <i className="fas fa-cloud text-4xl text-orange-custom mb-4"></i>
+              <h3 className="text-xl font-bold mb-2">100% Serverless</h3>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow">
+              <i className="fas fa-mobile-alt text-4xl text-orange-custom mb-4"></i>
+              <h3 className="text-xl font-bold mb-2">App Nativa</h3>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow">
+              <i className="fas fa-bolt text-4xl text-orange-custom mb-4"></i>
+              <h3 className="text-xl font-bold mb-2">Realtime</h3>
+            </div>
+          </div>
+        </div>
+      );
+
+      const tabContent = () => {
+        if (tab === 'resumen') return renderResumen();
+        if (tab === 'mercado') return renderMercado();
+        if (tab === 'proyecciones') return renderProyecciones();
+        if (tab === 'proyecto') return renderProyecto();
+        if (tab === 'tecnologia') return renderTecnologia();
+      };
+
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50">
+          <nav className="sticky top-0 bg-white shadow-xl border-b-4 border-orange-custom z-50">
+            <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+              <div className="flex items-center space-x-4">
+                <div className="bg-orange-custom text-white w-14 h-14 rounded-full flex items-center justify-center text-2xl font-black">PC</div>
+                <div>
+                  <h1 className="text-3xl font-black text-orange-custom">Padel Club</h1>
+                  <p className="text-xl font-semibold">Misiones</p>
+                </div>
+              </div>
+              <a href="mailto:hola@padelclubmisiones.com.ar" className="bg-orange-custom hover:bg-orange-700 text-white font-bold text-lg px-6 py-3 rounded-lg shadow transition">
+                Contacto
+              </a>
+            </div>
+          </nav>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+              <div className="flex flex-wrap border-b-2 border-orange-custom">
+                {tabs.map(t => (
+                  <button key={t} onClick={() => setTab(t)}
+                    className={`px-5 py-4 font-bold text-lg flex-1 md:flex-none transition ${tab === t ? 'bg-orange-custom text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                    {t === 'resumen' ? 'Resumen' : t === 'mercado' ? 'Mercado' : t === 'proyecciones' ? 'Proyecciones' : t === 'proyecto' ? 'Proyecto' : 'Tecnología'}
+                  </button>
+                ))}
+              </div>
+              <div className="p-6 md:p-10">
+                {tabContent()}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
