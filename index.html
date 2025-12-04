@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Padel Club Misiones – Plataforma Integral</title>
+  <title>Padel Club Misiones – Proyecciones</title>
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
@@ -16,13 +16,24 @@
     body { font-family: 'Inter', system-ui, sans-serif; }
     .stat-card { box-shadow: 0 4px 20px rgba(235, 99, 46, 0.15); }
     .feature-icon { background: linear-gradient(135deg, #EB632E, #f97316); }
+    .tooltip {
+      position: absolute;
+      background: rgba(0,0,0,0.85);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      pointer-events: none;
+      z-index: 50;
+      white-space: nowrap;
+    }
   </style>
 </head>
 <body class="bg-gray-50">
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState } = React;
+    const { useState, useEffect } = React;
 
     const Accordion = ({ title, children, defaultOpen = false }) => {
       const [open, setOpen] = useState(defaultOpen);
@@ -47,6 +58,12 @@
     const App = () => {
       const [tab, setTab] = useState('resumen');
       const [subTab, setSubTab] = useState('flujos');
+
+      // Estados para proyecciones
+      const [animarProyecciones, setAnimarProyecciones] = useState(false);
+      const [yaCargadoProyecciones, setYaCargadoProyecciones] = useState(false);
+      const [anioActivo, setAnioActivo] = useState(1);
+      const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, value: '' });
 
       const tabs = ['resumen', 'mercado', 'proyecciones', 'proyecto', 'tecnologia'];
 
@@ -87,6 +104,168 @@
         </div>
       );
 
+      // === PROYECCIONES ===
+      const renderProyecciones = () => {
+  const datosPorAnio = {
+    1: {
+      usuarios: 18000,
+      ingresos: 13200000,
+      mau: [1500, 2800, 4200, 6000, 8500, 11000, 13500, 15500, 17000, 18000, 18500, 19000],
+      ingresosMensuales: [300000, 600000, 1000000, 1800000, 2800000, 4200000, 5800000, 7500000, 9000000, 10200000, 11200000, 12000000]
+    },
+    2: {
+      usuarios: 42000,
+      ingresos: 32000000,
+      mau: [20000, 24000, 27000, 30000, 33000, 35000, 37000, 39000, 40000, 41000, 41500, 42000],
+      ingresosMensuales: [1500000, 2000000, 2800000, 4000000, 5500000, 7200000, 9000000, 11000000, 13000000, 15000000, 17000000, 19000000]
+    },
+    3: {
+      usuarios: 75000,
+      ingresos: 58000000,
+      mau: [45000, 52000, 58000, 62000, 65000, 68000, 70000, 72000, 73000, 74000, 74500, 75000],
+      ingresosMensuales: [3000000, 4000000, 5500000, 7500000, 10000000, 13000000, 16000000, 19000000, 22000000, 25000000, 27000000, 29000000]
+    }
+  };
+
+  const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+  const datos = datosPorAnio[anioActivo];
+  const maxHeightPx = 180;
+  const valorAAltura = (valor, maxValor) => Math.max((valor / maxValor) * maxHeightPx, 4);
+  const maxMAU = Math.max(...datos.mau);
+  const maxIngresos = Math.max(...datos.ingresosMensuales);
+
+  const formatARS = (num) => {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(num);
+  };
+
+  // Componente Tooltip local (renderizado dentro del gráfico)
+  const TooltipLocal = ({ x, y, value, visible }) => {
+    if (!visible) return null;
+    return (
+      <div
+        className="tooltip absolute z-10 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap"
+        style={{
+          left: `${x}px`,
+          top: `${y - 30}px`, // arriba de la barra
+          transform: 'translateX(-50%)' // centrado
+        }}
+      >
+        {value}
+      </div>
+    );
+  };
+
+  // Gráfico reutilizable
+  const Grafico = ({ 
+    titulo, 
+    datos, 
+    maxValor, 
+    formato = (v) => `${v.toLocaleString()} usuarios`,
+    color = "bg-orange-custom"
+  }) => {
+    const [tooltip, setTooltip] = useState({ x: 0, y: 0, value: '', visible: false });
+
+    return (
+      <div className="relative">
+        <h3 className="text-xl font-bold mb-3">{titulo}</h3>
+        <div className="flex items-end h-56 gap-1 bg-gray-50 p-4 rounded-lg relative">
+          <TooltipLocal {...tooltip} />
+          {datos.map((valor, i) => {
+            const altura = animarProyecciones ? valorAAltura(valor, maxValor) : 0;
+            return (
+              <div
+                key={i}
+                className="flex flex-col items-center flex-1"
+                onMouseEnter={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const contenedor = e.currentTarget.closest('.relative');
+                  const contenedorRect = contenedor.getBoundingClientRect();
+                  setTooltip({
+                    visible: true,
+                    x: rect.left - contenedorRect.left + rect.width / 2,
+                    y: rect.top - contenedorRect.top,
+                    value: formato(valor)
+                  });
+                }}
+                onMouseLeave={() => setTooltip(prev => ({ ...prev, visible: false }))}
+              >
+                <div
+                  className={`w-full ${color} rounded-t transition-all duration-1000 ease-out ${animarProyecciones ? '' : 'opacity-0'}`}
+                  style={{ height: `${altura}px` }}
+                ></div>
+                <span className="text-xs mt-2 text-gray-600">{months[i]}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="space-y-10">
+      <h2 className="text-4xl font-black text-center text-orange-custom">Proyecciones de Ingresos – Años 1, 2 y 3</h2>
+
+      <div className="flex justify-center gap-4">
+        {[1, 2, 3].map(a => (
+          <button
+            key={a}
+            onClick={() => setAnioActivo(a)}
+            className={`px-6 py-3 font-bold rounded-lg ${anioActivo === a ? 'bg-orange-custom text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+          >
+            Año {a}
+          </button>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
+        <div className="bg-white p-4 rounded-lg shadow">
+          <div className="text-2xl font-black text-orange-custom">{(datos.usuarios / 1000).toFixed(0)}K</div>
+          <div className="text-sm text-gray-600">Usuarios activos</div>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <div className="text-2xl font-black text-orange-custom">${(datos.ingresos / 1000000).toFixed(1)}M</div>
+          <div className="text-sm text-gray-600">Ingresos anuales</div>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <div className="text-2xl font-black text-orange-custom">{Math.round(datos.ingresos / datos.usuarios)}</div>
+          <div className="text-sm text-gray-600">ARS por usuario/año</div>
+        </div>
+      </div>
+
+      {/* Gráfico: Usuarios activos */}
+      <Grafico
+        titulo="Usuarios Activos Mensuales (MAU)"
+        datos={datos.mau}
+        maxValor={maxMAU}
+        formato={(v) => `${v.toLocaleString()} usuarios`}
+        color="bg-orange-custom"
+      />
+
+      {/* Gráfico: Ingresos mensuales */}
+      <Grafico
+        titulo="Ingresos Mensuales (ARS)"
+        datos={datos.ingresosMensuales}
+        maxValor={maxIngresos}
+        formato={formatARS}
+        color="bg-green-500"
+      />
+
+      <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
+        <p className="text-sm">
+          <strong>Supuestos:</strong> Crecimiento orgánico + adopción en complejos + torneos + misiones.
+          Ingresos netos de la plataforma (comisiones, marketplace, clases, publicidad).
+        </p>
+      </div>
+    </div>
+  );
+};
+
       // === MERCADO ===
       const renderMercado = () => (
         <div className="space-y-8">
@@ -111,68 +290,6 @@
           </div>
         </div>
       );
-
-      // === PROYECCIONES DETALLADAS ===
-      const renderProyecciones = () => {
-        const proyecciones = [
-          { año: "Año 1", usuarios: "18,000", ingresos: "$13.2M ARS", jueganXmes: "~6.4 turnos", penetracion: "21%" },
-          { año: "Año 2", usuarios: "42,000", ingresos: "$32M ARS", jueganXmes: "~6.1 turnos", penetracion: "29%" },
-          { año: "Año 3", usuarios: "75,000", ingresos: "$58M ARS", jueganXmes: "~5.8 turnos", penetracion: "33%" }
-        ];
-
-        return (
-          <div className="space-y-10">
-            <h2 className="text-4xl font-black text-center text-orange-custom">Proyecciones de Ingresos</h2>
-
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white border border-gray-300 rounded-xl shadow-md">
-                <thead className="bg-orange-custom text-white">
-                  <tr>
-                    <th className="py-3 px-4">Año</th>
-                    <th className="py-3 px-4">Usuarios Activos</th>
-                    <th className="py-3 px-4">Penetración</th>
-                    <th className="py-3 px-4">Turnos/mes por jugador</th>
-                    <th className="py-3 px-4">Ingresos Anuales</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {proyecciones.map((p, i) => (
-                    <tr key={i} className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}>
-                      <td className="py-3 px-4 font-bold">{p.año}</td>
-                      <td className="py-3 px-4">{p.usuarios}</td>
-                      <td className="py-3 px-4">{p.penetration}</td>
-                      <td className="py-3 px-4">{p.jueganXmes}</td>
-                      <td className="py-3 px-4 font-black text-orange-custom">{p.ingresos}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="text-2xl font-bold text-orange-custom mb-4">Desglose de Ingresos – Año 1</h3>
-              <ul className="space-y-2 text-lg">
-                <li><strong>Reservas (10% comisión):</strong> $8.58M ARS (65%)</li>
-                <li><strong>Marketplace (margen 35%):</strong> $2.64M ARS (20%)</li>
-                <li><strong>Clases (15% comisión):</strong> $1.58M ARS (12%)</li>
-                <li><strong>Publicidad + Complejos:</strong> $0.4M ARS (3%)</li>
-              </ul>
-            </div>
-
-            <Accordion title="Supuestos clave" defaultOpen={true}>
-              <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Base de jugadores:</strong> 18,000 activos en Misiones (2025)</li>
-                <li><strong>Frecuencia promedio:</strong> 1.5 veces por semana → ~6.4 turnos/mes</li>
-                <li><strong>Ticket promedio por turno:</strong> $8,500 ARS</li>
-                <li><strong>Penetración plataforma:</strong> 21% en Año 1 (3,800 jugadores pagos)</li>
-                <li><strong>Comisión promedio efectiva:</strong> ~10% (los descuentos los absorbe la plataforma)</li>
-                <li><strong>Ingreso adicional por jugador:</strong> $1,200 ARS/mes (marketplace, clases, torneos)</li>
-                <li><strong>Premios:</strong> nunca en efectivo → evita regulaciones (solo créditos, productos o servicios)</li>
-              </ul>
-            </Accordion>
-          </div>
-        );
-      };
 
       // === FLUJOS ===
       const flujos = [
@@ -210,31 +327,7 @@
         { titulo: "12. Clases y Clinics", contenido: "Directorio de profesores → clases individuales/grupales → planes progresivos → reseñas." }
       ];
 
-      // === CARACTERÍSTICAS DETALLADAS ===
-      const caracteristicas = [
-        "Matchmaking Inteligente con IA (nivel, horario, estilo, ubicación)",
-        "Torneos con brackets automáticos y premios en créditos/productos",
-        "Ligas zonales con ascenso/descenso y rankings semanales",
-        "Misiones diarias y sistema de XP + niveles + badges + monedas virtuales",
-        "Feed social con resultados, fotos, videos y check-ins",
-        "Chat grupal integrado con encuestas, votación y ubicación en vivo",
-        "Precios dinámicos (pico/valle, clima, anticipación, ocupación)",
-        "Reservas recurrentes, lista de espera, extender turno en vivo",
-        "Check-in con QR + penalización por no-show + reputación",
-        "Marketplace integrado (retiro en partido, envío, reviews)",
-        "Clases con profesores certificados y planes progresivos",
-        "Panel admin para complejos (analytics, marketing, inventario, empleados)",
-        "Publicidad segmentada para marcas (banner, posts, push)",
-        "Verificación con DNI y badge de perfil verificado",
-        "Sistema de amigos y crews (duplas permanentes con estadísticas)",
-        "Gamificación completa (misiones, logros, desafíos, retos)",
-        "Estadísticas avanzadas (frecuencia, socios frecuentes, rendimiento)",
-        "Historial de partidos con reviews mutuas y fotos",
-        "Calificación de puntualidad y fair play",
-        "Pagos divididos automáticos vía Mercado Pago"
-      ];
-
-      // === PROYECTO COMPLETO ===
+      // === PROYECTO ===
       const renderProyecto = () => (
         <div className="space-y-8">
           <h2 className="text-4xl font-black text-orange-custom">Proyecto Completo</h2>
@@ -263,7 +356,16 @@
             <div>
               <h3 className="text-3xl font-bold text-orange-custom mb-6">Características Clave</h3>
               <div className="grid md:grid-cols-2 gap-4">
-                {caracteristicas.map((f, i) => (
+                {[
+                  "Matchmaking Inteligente con IA",
+                  "Torneos con brackets automáticos",
+                  "Ligas con ascenso/descenso",
+                  "Misiones diarias + XP + niveles",
+                  "Feed social y check-ins",
+                  "Chat grupal con encuestas",
+                  "Precios dinámicos (clima, horario, ocupación)",
+                  "Reservas recurrentes y lista de espera"
+                ].map((f, i) => (
                   <div key={i} className="flex items-start p-4 bg-orange-50 rounded-lg border border-orange-200">
                     <span className="feature-icon text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
                       <i className="fas fa-check"></i>
@@ -301,7 +403,6 @@
                 <li><strong>Fase 1:</strong> Consolidación en toda Misiones (Posadas, Oberá, Iguazú, Eldorado)</li>
                 <li><strong>Fase 2:</strong> Escalado a provincias vecinas (Corrientes, Chaco, Formosa)</li>
                 <li><strong>Fase 3:</strong> Multi-deporte: misma arquitectura para tenis, fútbol 5, pickleball</li>
-                <li>Soporte para apps separadas o plataforma unificada con filtro deportivo</li>
               </ul>
             </div>
           )}
@@ -357,6 +458,21 @@
         if (tab === 'tecnologia') return renderTecnologia();
       };
 
+      // Activar animación cuando se entra a "proyecciones"
+      useEffect(() => {
+        if (tab === 'proyecciones' && !yaCargadoProyecciones) {
+          const timer = setTimeout(() => {
+            setAnimarProyecciones(true);
+            setYaCargadoProyecciones(true);
+          }, 100);
+          return () => clearTimeout(timer);
+        }
+        if (tab !== 'proyecciones' && yaCargadoProyecciones) {
+          setAnimarProyecciones(false);
+          setYaCargadoProyecciones(false);
+        }
+      }, [tab, yaCargadoProyecciones]);
+
       return (
         <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50">
           <nav className="sticky top-0 bg-white shadow-xl border-b-4 border-orange-custom z-50">
@@ -380,7 +496,11 @@
                 {tabs.map(t => (
                   <button key={t} onClick={() => setTab(t)}
                     className={`px-5 py-4 font-bold text-lg flex-1 md:flex-none transition ${tab === t ? 'bg-orange-custom text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>
-                    {t === 'resumen' ? 'Resumen' : t === 'mercado' ? 'Mercado' : t === 'proyecciones' ? 'Proyecciones' : t === 'proyecto' ? 'Proyecto' : 'Tecnología'}
+                    {t === 'resumen' ? 'Resumen' : 
+                     t === 'mercado' ? 'Mercado' : 
+                     t === 'proyecciones' ? 'Proyecciones' : 
+                     t === 'proyecto' ? 'Proyecto' : 
+                     'Tecnología'}
                   </button>
                 ))}
               </div>
@@ -393,7 +513,8 @@
       );
     };
 
-    ReactDOM.render(<App />, document.getElementById('root'));
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
   </script>
 </body>
 </html>
