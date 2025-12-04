@@ -423,32 +423,66 @@
       );
 
       // === TECNOLOGÍA ===
-      const renderTecnologia = () => (
-        <div className="space-y-8">
-          <h2 className="text-4xl font-black text-center text-orange-custom">Tecnología y Costos</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="text-xl font-bold mb-3">Stack Técnico</h3>
-              <ul className="space-y-2">
-                <li>• Web: Next.js 14 + Tailwind CSS</li>
-                <li>• Mobile: React Native + Expo</li>
-                <li>• Backend: Supabase (PostgreSQL, Auth, Storage, Functions)</li>
-                <li>• Hosting: Vercel + Supabase + Expo EAS</li>
-              </ul>
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="text-xl font-bold mb-3">Costos Iniciales (~USD)</h3>
-              <ul className="space-y-2">
-                <li>• Vercel Pro: $20/mes</li>
-                <li>• Supabase Pro: $25/mes</li>
-                <li>• Expo EAS: $29/mes</li>
-                <li>• Servicios (email/SMS): ~$20/mes</li>
-                <li className="font-bold">Total estimado: ~$230 USD/mes</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      );
+     // === TECNOLOGÍA Y ESTRATEGIA DE LANZAMIENTO ===
+const renderTecnologia = () => (
+  <div className="space-y-8">
+    <h2 className="text-4xl font-black text-center text-orange-custom">Tecnología y Estrategia de Lanzamiento</h2>
+
+    {/* Opción 1: MVP GRATIS */}
+    <div className="bg-white p-6 rounded-xl shadow">
+      <h3 className="text-2xl font-bold mb-4 text-orange-custom">OptionsResolver 1: MVP 100% Gratis (Meses 1-2)</h3>
+      <ul className="space-y-2">
+        <li>• <strong>Dominio:</strong> Usar subdominio gratis (ej: `padel-club-misiones.github.io`)</li>
+        <li>• <strong>Hosting web:</strong> GitHub Pages (gratis, HTTPS incluido)</li>
+        <li>• <strong>Backend:</strong> Supabase (plan gratuito: 500MB DB, 1GB storage, 2M requests/mes)</li>
+        <li>• <strong>App móvil:</strong> No se desarrolla aún; la web es 100% responsive</li>
+        <li>• <strong>Costo total:</strong> <span className="font-bold">$0 USD/mes</span></li>
+      </ul>
+      <p className="mt-3 text-sm">
+        Ideal para validar flujos, conseguir los primeros 3 complejos y 500 jugadores.
+      </p>
+    </div>
+
+    {/* Opción 2: Hosting económico LATAM */}
+    <div className="bg-white p-6 rounded-xl shadow">
+      <h3 className="text-2xl font-bold mb-4 text-orange-custom">Opción 2: Hosting en Argentina/LATAM (Desde Mes 3)</h3>
+      <ul className="space-y-2">
+        <li>• <strong>Dominio propio:</strong> `.com.ar` o `.com` (~$300–$800 ARS/año en DonWeb, Hostinger o Nic.ar)</li>
+        <li>• <strong>Hosting web:</strong> Hostinger, DonWeb o Vercel (plan básico ~$200–$500 ARS/mes)</li>
+        <li>• <strong>Soporte técnico local:</strong> Ideal si no hay equipo técnico</li>
+        <li>• <strong>Constructores de páginas:</strong> Si no hay desarrolladores, se puede armar una landing con WordPress + Elementor o Webflow</li>
+        <li>• <strong>Integraciones:</strong> Mercado Pago, Google Maps, WhatsApp</li>
+      </ul>
+      <p className="mt-3 text-sm">
+        Permite tener marca profesional y mejor posicionamiento SEO desde el inicio.
+      </p>
+    </div>
+
+    {/* Opción 3: Escalado profesional (Mes 6+) */}
+    <div className="bg-white p-6 rounded-xl shadow">
+      <h3 className="text-2xl font-bold mb-4 text-orange-custom">Opción 3: Escalado Profesional (Mes 6 en adelante)</h3>
+      <ul className="space-y-2">
+        <li>• <strong>Frontend Web:</strong> Vercel Pro ($20 USD/mes)</li>
+        <li>• <strong>Backend:</strong> Supabase Pro ($25 USD/mes)</li>
+        <li>• <strong>App móvil:</strong> Expo EAS ($29 USD/mes)</li>
+        <li>• <strong>Monitoreo:</strong> Sentry + PostHog (gratis en inicio, luego ~$20 USD/mes)</li>
+        <li>• <strong>Costo total estimado:</strong> <span className="font-bold">~$230 USD/mes</span> (equivalente a ~$200,000 ARS/mes)</li>
+      </ul>
+      <p className="mt-3 text-sm">
+        Infraestructura 100% serverless, escalable a 100K usuarios sin cambios arquitectónicos.
+      </p>
+    </div>
+
+    {/* Recomendación final */}
+    <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
+      <p className="text-sm">
+        <strong>Recomendación:</strong> Empezar con la Opción 1 (gratis) para validar el modelo.
+        Al superar los 1,000 jugadores activos, migrar a dominio propio y hosting en Hostinger/DonWeb.
+        Al alcanzar ingresos mensuales de $5M+ ARS, escalar a Vercel + Supabase Pro.
+      </p>
+    </div>
+  </div>
+);
 
       const tabContent = () => {
         if (tab === 'resumen') return renderResumen();
