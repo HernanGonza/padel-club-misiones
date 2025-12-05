@@ -65,7 +65,17 @@
       const [anioActivo, setAnioActivo] = useState(1);
       const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, value: '' });
 
-      const tabs = ['resumen', 'mercado', 'proyecciones', 'proyecto', 'tecnologia'];
+      // Estados para la pestaña de precios dinámicos
+      const [precioBase, setPrecioBase] = useState(15000);
+      const [canchas, setCanchas] = useState(5);
+      const [viendo, setViendo] = useState(8);
+      const [intentando, setIntentando] = useState(4);
+      const [cola, setCola] = useState(1);
+      const [historica, setHistorica] = useState(6);
+      const [vecinos, setVecinos] = useState(2);
+
+      // Pestañas actualizadas
+      const tabs = ['resumen', 'mercado', 'proyecciones', 'proyecto', 'precios', 'tecnologia'];
 
       // === RESUMEN ===
       const renderResumen = () => (
@@ -106,165 +116,165 @@
 
       // === PROYECCIONES ===
       const renderProyecciones = () => {
-  const datosPorAnio = {
-    1: {
-      usuarios: 18000,
-      ingresos: 13200000,
-      mau: [1500, 2800, 4200, 6000, 8500, 11000, 13500, 15500, 17000, 18000, 18500, 19000],
-      ingresosMensuales: [300000, 600000, 1000000, 1800000, 2800000, 4200000, 5800000, 7500000, 9000000, 10200000, 11200000, 12000000]
-    },
-    2: {
-      usuarios: 42000,
-      ingresos: 32000000,
-      mau: [20000, 24000, 27000, 30000, 33000, 35000, 37000, 39000, 40000, 41000, 41500, 42000],
-      ingresosMensuales: [1500000, 2000000, 2800000, 4000000, 5500000, 7200000, 9000000, 11000000, 13000000, 15000000, 17000000, 19000000]
-    },
-    3: {
-      usuarios: 75000,
-      ingresos: 58000000,
-      mau: [45000, 52000, 58000, 62000, 65000, 68000, 70000, 72000, 73000, 74000, 74500, 75000],
-      ingresosMensuales: [3000000, 4000000, 5500000, 7500000, 10000000, 13000000, 16000000, 19000000, 22000000, 25000000, 27000000, 29000000]
-    }
-  };
+        const datosPorAnio = {
+          1: {
+            usuarios: 18000,
+            ingresos: 13200000,
+            mau: [1500, 2800, 4200, 6000, 8500, 11000, 13500, 15500, 17000, 18000, 18500, 19000],
+            ingresosMensuales: [300000, 600000, 1000000, 1800000, 2800000, 4200000, 5800000, 7500000, 9000000, 10200000, 11200000, 12000000]
+          },
+          2: {
+            usuarios: 42000,
+            ingresos: 32000000,
+            mau: [20000, 24000, 27000, 30000, 33000, 35000, 37000, 39000, 40000, 41000, 41500, 42000],
+            ingresosMensuales: [1500000, 2000000, 2800000, 4000000, 5500000, 7200000, 9000000, 11000000, 13000000, 15000000, 17000000, 19000000]
+          },
+          3: {
+            usuarios: 75000,
+            ingresos: 58000000,
+            mau: [45000, 52000, 58000, 62000, 65000, 68000, 70000, 72000, 73000, 74000, 74500, 75000],
+            ingresosMensuales: [3000000, 4000000, 5500000, 7500000, 10000000, 13000000, 16000000, 19000000, 22000000, 25000000, 27000000, 29000000]
+          }
+        };
 
-  const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-  const datos = datosPorAnio[anioActivo];
-  const maxHeightPx = 180;
-  const valorAAltura = (valor, maxValor) => Math.max((valor / maxValor) * maxHeightPx, 4);
-  const maxMAU = Math.max(...datos.mau);
-  const maxIngresos = Math.max(...datos.ingresosMensuales);
+        const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        const datos = datosPorAnio[anioActivo];
+        const maxHeightPx = 180;
+        const valorAAltura = (valor, maxValor) => Math.max((valor / maxValor) * maxHeightPx, 4);
+        const maxMAU = Math.max(...datos.mau);
+        const maxIngresos = Math.max(...datos.ingresosMensuales);
 
-  const formatARS = (num) => {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(num);
-  };
+        const formatARS = (num) => {
+          return new Intl.NumberFormat('es-AR', {
+            style: 'currency',
+            currency: 'ARS',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+          }).format(num);
+        };
 
-  // Componente Tooltip local (renderizado dentro del gráfico)
-  const TooltipLocal = ({ x, y, value, visible }) => {
-    if (!visible) return null;
-    return (
-      <div
-        className="tooltip absolute z-10 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap"
-        style={{
-          left: `${x}px`,
-          top: `${y - 30}px`, // arriba de la barra
-          transform: 'translateX(-50%)' // centrado
-        }}
-      >
-        {value}
-      </div>
-    );
-  };
+        // Componente Tooltip local (renderizado dentro del gráfico)
+        const TooltipLocal = ({ x, y, value, visible }) => {
+          if (!visible) return null;
+          return (
+            <div
+              className="tooltip absolute z-10 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap"
+              style={{
+                left: `${x}px`,
+                top: `${y - 30}px`, // arriba de la barra
+                transform: 'translateX(-50%)' // centrado
+              }}
+            >
+              {value}
+            </div>
+          );
+        };
 
-  // Gráfico reutilizable
-  const Grafico = ({ 
-    titulo, 
-    datos, 
-    maxValor, 
-    formato = (v) => `${v.toLocaleString()} usuarios`,
-    color = "bg-orange-custom"
-  }) => {
-    const [tooltip, setTooltip] = useState({ x: 0, y: 0, value: '', visible: false });
+        // Gráfico reutilizable
+        const Grafico = ({ 
+          titulo, 
+          datos, 
+          maxValor, 
+          formato = (v) => `${v.toLocaleString()} usuarios`,
+          color = "bg-orange-custom"
+        }) => {
+          const [tooltip, setTooltip] = useState({ x: 0, y: 0, value: '', visible: false });
 
-    return (
-      <div className="relative">
-        <h3 className="text-xl font-bold mb-3">{titulo}</h3>
-        <div className="flex items-end h-56 gap-1 bg-gray-50 p-4 rounded-lg relative">
-          <TooltipLocal {...tooltip} />
-          {datos.map((valor, i) => {
-            const altura = animarProyecciones ? valorAAltura(valor, maxValor) : 0;
-            return (
-              <div
-                key={i}
-                className="flex flex-col items-center flex-1"
-                onMouseEnter={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const contenedor = e.currentTarget.closest('.relative');
-                  const contenedorRect = contenedor.getBoundingClientRect();
-                  setTooltip({
-                    visible: true,
-                    x: rect.left - contenedorRect.left + rect.width / 2,
-                    y: rect.top - contenedorRect.top,
-                    value: formato(valor)
-                  });
-                }}
-                onMouseLeave={() => setTooltip(prev => ({ ...prev, visible: false }))}
-              >
-                <div
-                  className={`w-full ${color} rounded-t transition-all duration-1000 ease-out ${animarProyecciones ? '' : 'opacity-0'}`}
-                  style={{ height: `${altura}px` }}
-                ></div>
-                <span className="text-xs mt-2 text-gray-600">{months[i]}</span>
+          return (
+            <div className="relative">
+              <h3 className="text-xl font-bold mb-3">{titulo}</h3>
+              <div className="flex items-end h-56 gap-1 bg-gray-50 p-4 rounded-lg relative">
+                <TooltipLocal {...tooltip} />
+                {datos.map((valor, i) => {
+                  const altura = animarProyecciones ? valorAAltura(valor, maxValor) : 0;
+                  return (
+                    <div
+                      key={i}
+                      className="flex flex-col items-center flex-1"
+                      onMouseEnter={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const contenedor = e.currentTarget.closest('.relative');
+                        const contenedorRect = contenedor.getBoundingClientRect();
+                        setTooltip({
+                          visible: true,
+                          x: rect.left - contenedorRect.left + rect.width / 2,
+                          y: rect.top - contenedorRect.top,
+                          value: formato(valor)
+                        });
+                      }}
+                      onMouseLeave={() => setTooltip(prev => ({ ...prev, visible: false }))}
+                    >
+                      <div
+                        className={`w-full ${color} rounded-t transition-all duration-1000 ease-out ${animarProyecciones ? '' : 'opacity-0'}`}
+                        style={{ height: `${altura}px` }}
+                      ></div>
+                      <span className="text-xs mt-2 text-gray-600">{months[i]}</span>
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
+            </div>
+          );
+        };
 
-  return (
-    <div className="space-y-10">
-      <h2 className="text-4xl font-black text-center text-orange-custom">Proyecciones de Ingresos – Años 1, 2 y 3</h2>
+        return (
+          <div className="space-y-10">
+            <h2 className="text-4xl font-black text-center text-orange-custom">Proyecciones de Ingresos – Años 1, 2 y 3</h2>
 
-      <div className="flex justify-center gap-4">
-        {[1, 2, 3].map(a => (
-          <button
-            key={a}
-            onClick={() => setAnioActivo(a)}
-            className={`px-6 py-3 font-bold rounded-lg ${anioActivo === a ? 'bg-orange-custom text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
-          >
-            Año {a}
-          </button>
-        ))}
-      </div>
+            <div className="flex justify-center gap-4">
+              {[1, 2, 3].map(a => (
+                <button
+                  key={a}
+                  onClick={() => setAnioActivo(a)}
+                  className={`px-6 py-3 font-bold rounded-lg ${anioActivo === a ? 'bg-orange-custom text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+                >
+                  Año {a}
+                </button>
+              ))}
+            </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
-        <div className="bg-white p-4 rounded-lg shadow">
-          <div className="text-2xl font-black text-orange-custom">{(datos.usuarios / 1000).toFixed(0)}K</div>
-          <div className="text-sm text-gray-600">Usuarios activos</div>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow">
-          <div className="text-2xl font-black text-orange-custom">${(datos.ingresos / 1000000).toFixed(1)}M</div>
-          <div className="text-sm text-gray-600">Ingresos anuales</div>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow">
-          <div className="text-2xl font-black text-orange-custom">{Math.round(datos.ingresos / datos.usuarios)}</div>
-          <div className="text-sm text-gray-600">ARS por usuario/año</div>
-        </div>
-      </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
+              <div className="bg-white p-4 rounded-lg shadow">
+                <div className="text-2xl font-black text-orange-custom">{(datos.usuarios / 1000).toFixed(0)}K</div>
+                <div className="text-sm text-gray-600">Usuarios activos</div>
+              </div>
+              <div className="bg-white p-4 rounded-lg shadow">
+                <div className="text-2xl font-black text-orange-custom">${(datos.ingresos / 1000000).toFixed(1)}M</div>
+                <div className="text-sm text-gray-600">Ingresos anuales</div>
+              </div>
+              <div className="bg-white p-4 rounded-lg shadow">
+                <div className="text-2xl font-black text-orange-custom">{Math.round(datos.ingresos / datos.usuarios)}</div>
+                <div className="text-sm text-gray-600">ARS por usuario/año</div>
+              </div>
+            </div>
 
-      {/* Gráfico: Usuarios activos */}
-      <Grafico
-        titulo="Usuarios Activos Mensuales (MAU)"
-        datos={datos.mau}
-        maxValor={maxMAU}
-        formato={(v) => `${v.toLocaleString()} usuarios`}
-        color="bg-orange-custom"
-      />
+            {/* Gráfico: Usuarios activos */}
+            <Grafico
+              titulo="Usuarios Activos Mensuales (MAU)"
+              datos={datos.mau}
+              maxValor={maxMAU}
+              formato={(v) => `${v.toLocaleString()} usuarios`}
+              color="bg-orange-custom"
+            />
 
-      {/* Gráfico: Ingresos mensuales */}
-      <Grafico
-        titulo="Ingresos Mensuales (ARS)"
-        datos={datos.ingresosMensuales}
-        maxValor={maxIngresos}
-        formato={formatARS}
-        color="bg-green-500"
-      />
+            {/* Gráfico: Ingresos mensuales */}
+            <Grafico
+              titulo="Ingresos Mensuales (ARS)"
+              datos={datos.ingresosMensuales}
+              maxValor={maxIngresos}
+              formato={formatARS}
+              color="bg-green-500"
+            />
 
-      <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
-        <p className="text-sm">
-          <strong>Supuestos:</strong> Crecimiento orgánico + adopción en complejos + torneos + misiones.
-          Ingresos netos de la plataforma (comisiones, marketplace, clases, publicidad).
-        </p>
-      </div>
-    </div>
-  );
-};
+            <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
+              <p className="text-sm">
+                <strong>Supuestos:</strong> Crecimiento orgánico + adopción en complejos + torneos + misiones.
+                Ingresos netos de la plataforma (comisiones, marketplace, clases, publicidad).
+              </p>
+            </div>
+          </div>
+        );
+      };
 
       // === MERCADO ===
       const renderMercado = () => (
@@ -422,73 +432,223 @@
         </div>
       );
 
-      // === TECNOLOGÍA ===
-     // === TECNOLOGÍA Y ESTRATEGIA DE LANZAMIENTO ===
-const renderTecnologia = () => (
-  <div className="space-y-8">
-    <h2 className="text-4xl font-black text-center text-orange-custom">Tecnología y Estrategia de Lanzamiento</h2>
+      // === PRECIOS DINÁMICOS ===
+      const renderPrecios = () => {
+        // Parámetros internos del algoritmo
+        const NORMALIZADOR = 0.6;
+        const SUAVIZADO = 0.3;
+        const MULTIPLICADOR_MIN = 0.8;
+        const MULTIPLICADOR_MAX = 2.5;
 
-    {/* Opción 1: MVP GRATIS */}
-    <div className="bg-white p-6 rounded-xl shadow">
-      <h3 className="text-2xl font-bold mb-4 text-orange-custom">OptionsResolver 1: MVP 100% Gratis (Meses 1-2)</h3>
-      <ul className="space-y-2">
-        <li>• <strong>Dominio:</strong> Usar subdominio gratis (ej: `padel-club-misiones.github.io`)</li>
-        <li>• <strong>Hosting web:</strong> GitHub Pages (gratis, HTTPS incluido)</li>
-        <li>• <strong>Backend:</strong> Supabase (plan gratuito: 500MB DB, 1GB storage, 2M requests/mes)</li>
-        <li>• <strong>App móvil:</strong> No se desarrolla aún; la web es 100% responsive</li>
-        <li>• <strong>Costo total:</strong> <span className="font-bold">$0 USD/mes</span></li>
-      </ul>
-      <p className="mt-3 text-sm">
-        Ideal para validar flujos, conseguir los primeros 3 complejos y 500 jugadores.
-      </p>
-    </div>
+        // Estado para suavizado por horario (simplificado como variable local)
+        let Mprevio = 1.0;
 
-    {/* Opción 2: Hosting económico LATAM */}
-    <div className="bg-white p-6 rounded-xl shadow">
-      <h3 className="text-2xl font-bold mb-4 text-orange-custom">Opción 2: Hosting en Argentina/LATAM (Desde Mes 3)</h3>
-      <ul className="space-y-2">
-        <li>• <strong>Dominio propio:</strong> `.com.ar` o `.com` (~$300–$800 ARS/año en DonWeb, Hostinger o Nic.ar)</li>
-        <li>• <strong>Hosting web:</strong> Hostinger, DonWeb o Vercel (plan básico ~$200–$500 ARS/mes)</li>
-        <li>• <strong>Soporte técnico local:</strong> Ideal si no hay equipo técnico</li>
-        <li>• <strong>Constructores de páginas:</strong> Si no hay desarrolladores, se puede armar una landing con WordPress + Elementor o Webflow</li>
-        <li>• <strong>Integraciones:</strong> Mercado Pago, Google Maps, WhatsApp</li>
-      </ul>
-      <p className="mt-3 text-sm">
-        Permite tener marca profesional y mejor posicionamiento SEO desde el inicio.
-      </p>
-    </div>
+        // Función principal del algoritmo
+        const calcularPrecio = () => {
+          if (canchas <= 0) return precioBase * MULTIPLICADOR_MAX;
 
-    {/* Opción 3: Escalado profesional (Mes 6+) */}
-    <div className="bg-white p-6 rounded-xl shadow">
-      <h3 className="text-2xl font-bold mb-4 text-orange-custom">Opción 3: Escalado Profesional (Mes 6 en adelante)</h3>
-      <ul className="space-y-2">
-        <li>• <strong>Frontend Web:</strong> Vercel Pro ($20 USD/mes)</li>
-        <li>• <strong>Backend:</strong> Supabase Pro ($25 USD/mes)</li>
-        <li>• <strong>App móvil:</strong> Expo EAS ($29 USD/mes)</li>
-        <li>• <strong>Monitoreo:</strong> Sentry + PostHog (gratis en inicio, luego ~$20 USD/mes)</li>
-        <li>• <strong>Costo total estimado:</strong> <span className="font-bold">~$230 USD/mes</span> (equivalente a ~$200,000 ARS/mes)</li>
-      </ul>
-      <p className="mt-3 text-sm">
-        Infraestructura 100% serverless, escalable a 100K usuarios sin cambios arquitectónicos.
-      </p>
-    </div>
+          // Sanitizar datos
+          const dViendo = Math.max(0, viendo || 0);
+          const dIntentando = Math.max(0, intentando || 0);
+          const dCola = Math.max(0, cola || 0);
+          const dHistorica = Math.max(0, historica || 0);
+          const dVecinos = Math.max(0, vecinos || 0);
 
-    {/* Recomendación final */}
-    <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
-      <p className="text-sm">
-        <strong>Recomendación:</strong> Empezar con la Opción 1 (gratis) para validar el modelo.
-        Al superar los 1,000 jugadores activos, migrar a dominio propio y hosting en Hostinger/DonWeb.
-        Al alcanzar ingresos mensuales de $5M+ ARS, escalar a Vercel + Supabase Pro.
-      </p>
-    </div>
-  </div>
-);
+          // Demanda total ponderada
+          const Dtotal = (0.35 * dViendo) + (0.30 * dIntentando) + (0.10 * dCola) + (0.20 * dHistorica) + (0.05 * dVecinos);
+
+          // Ratio
+          const R = Dtotal / canchas;
+
+          // Multiplicador crudo
+          let Mcrudo = 1 + (R - 1) * NORMALIZADOR;
+
+          // Límites
+          let Mlimitado = Math.min(Math.max(Mcrudo, MULTIPLICADOR_MIN), MULTIPLICADOR_MAX);
+
+          // Suavizado
+          const M = SUAVIZADO * Mlimitado + (1 - SUAVIZADO) * Mprevio;
+
+          // Actualizar Mprevio para la próxima simulación
+          Mprevio = M;
+
+          // Precio final
+          return precioBase * M;
+        };
+
+        const precioFinal = calcularPrecio();
+
+        return (
+          <div className="space-y-8">
+            <h2 className="text-4xl font-black text-center text-orange-custom">Precios Dinámicos</h2>
+
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="text-2xl font-bold mb-4">¿Cómo funciona?</h3>
+              <p className="mb-4">
+                Nuestro algoritmo ajusta automáticamente el precio de cada turno según la relación entre 
+                <strong> demanda en tiempo real</strong> y <strong>capacidad disponible</strong>.
+              </p>
+              <ul className="list-disc pl-6 mb-4 space-y-2">
+                <li><strong>Demanda total:</strong> Combina usuarios viendo, intentando reservar, en cola, histórico y horarios vecinos</li>
+                <li><strong>Suavizado:</strong> Evita saltos bruscos entre cálculos sucesivos</li>
+                <li><strong>Rango:</strong> Precio final entre 80% y 250% del precio base</li>
+              </ul>
+              <p>
+                Inspirado en modelos de Uber, pero calibrado para el mercado de pádel en Misiones.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 p-6 rounded-xl">
+              <h3 className="text-2xl font-bold mb-4">Probador del Algoritmo</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Precio Base (ARS)</label>
+                  <input
+                    type="number"
+                    value={precioBase}
+                    onChange={(e) => setPrecioBase(Number(e.target.value))}
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Canchas Disponibles</label>
+                  <input
+                    type="number"
+                    value={canchas}
+                    onChange={(e) => setCanchas(Number(e.target.value))}
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Usuarios viendo horario</label>
+                  <input
+                    type="number"
+                    value={viendo}
+                    onChange={(e) => setViendo(Number(e.target.value))}
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Usuarios intentando reservar</label>
+                  <input
+                    type="number"
+                    value={intentando}
+                    onChange={(e) => setIntentando(Number(e.target.value))}
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Usuarios en cola</label>
+                  <input
+                    type="number"
+                    value={cola}
+                    onChange={(e) => setCola(Number(e.target.value))}
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Demanda histórica</label>
+                  <input
+                    type="number"
+                    value={historica}
+                    onChange={(e) => setHistorica(Number(e.target.value))}
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Demanda horarios vecinos</label>
+                  <input
+                    type="number"
+                    value={vecinos}
+                    onChange={(e) => setVecinos(Number(e.target.value))}
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <h4 className="font-bold mb-2">Precio Calculado</h4>
+                  <div className="text-3xl font-black text-green-600">
+                    {new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(precioFinal)}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
+              <p className="text-sm">
+                <strong>Parámetros del algoritmo:</strong> Normalizador = 0.6 | Suavizado = 0.3 | Rango: 0.8x a 2.5x del precio base
+              </p>
+            </div>
+          </div>
+        );
+      };
+
+      // === TECNOLOGÍA Y ESTRATEGIA DE LANZAMIENTO ===
+      const renderTecnologia = () => (
+        <div className="space-y-8">
+          <h2 className="text-4xl font-black text-center text-orange-custom">Tecnología y Estrategia de Lanzamiento</h2>
+
+          {/* Opción 1: MVP GRATIS */}
+          <div className="bg-white p-6 rounded-xl shadow">
+            <h3 className="text-2xl font-bold mb-4 text-orange-custom">OptionsResolver 1: MVP 100% Gratis (Meses 1-2)</h3>
+            <ul className="space-y-2">
+              <li>• <strong>Dominio:</strong> Usar subdominio gratis (ej: `padel-club-misiones.github.io`)</li>
+              <li>• <strong>Hosting web:</strong> GitHub Pages (gratis, HTTPS incluido)</li>
+              <li>• <strong>Backend:</strong> Supabase (plan gratuito: 500MB DB, 1GB storage, 2M requests/mes)</li>
+              <li>• <strong>App móvil:</strong> No se desarrolla aún; la web es 100% responsive</li>
+              <li>• <strong>Costo total:</strong> <span className="font-bold">$0 USD/mes</span></li>
+            </ul>
+            <p className="mt-3 text-sm">
+              Ideal para validar flujos, conseguir los primeros 3 complejos y 500 jugadores.
+            </p>
+          </div>
+
+          {/* Opción 2: Hosting económico LATAM */}
+          <div className="bg-white p-6 rounded-xl shadow">
+            <h3 className="text-2xl font-bold mb-4 text-orange-custom">Opción 2: Hosting en Argentina/LATAM (Desde Mes 3)</h3>
+            <ul className="space-y-2">
+              <li>• <strong>Dominio propio:</strong> `.com.ar` o `.com` (~$300–$800 ARS/año en DonWeb, Hostinger o Nic.ar)</li>
+              <li>• <strong>Hosting web:</strong> Hostinger, DonWeb o Vercel (plan básico ~$200–$500 ARS/mes)</li>
+              <li>• <strong>Soporte técnico local:</strong> Ideal si no hay equipo técnico</li>
+              <li>• <strong>Constructores de páginas:</strong> Si no hay desarrolladores, se puede armar una landing con WordPress + Elementor o Webflow</li>
+              <li>• <strong>Integraciones:</strong> Mercado Pago, Google Maps, WhatsApp</li>
+            </ul>
+            <p className="mt-3 text-sm">
+              Permite tener marca profesional y mejor posicionamiento SEO desde el inicio.
+            </p>
+          </div>
+
+          {/* Opción 3: Escalado profesional (Mes 6+) */}
+          <div className="bg-white p-6 rounded-xl shadow">
+            <h3 className="text-2xl font-bold mb-4 text-orange-custom">Opción 3: Escalado Profesional (Mes 6 en adelante)</h3>
+            <ul className="space-y-2">
+              <li>• <strong>Frontend Web:</strong> Vercel Pro ($20 USD/mes)</li>
+              <li>• <strong>Backend:</strong> Supabase Pro ($25 USD/mes)</li>
+              <li>• <strong>App móvil:</strong> Expo EAS ($29 USD/mes)</li>
+              <li>• <strong>Monitoreo:</strong> Sentry + PostHog (gratis en inicio, luego ~$20 USD/mes)</li>
+              <li>• <strong>Costo total estimado:</strong> <span className="font-bold">~$230 USD/mes</span> (equivalente a ~$200,000 ARS/mes)</li>
+            </ul>
+            <p className="mt-3 text-sm">
+              Infraestructura 100% serverless, escalable a 100K usuarios sin cambios arquitectónicos.
+            </p>
+          </div>
+
+          {/* Recomendación final */}
+          <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
+            <p className="text-sm">
+              <strong>Recomendación:</strong> Empezar con la Opción 1 (gratis) para validar el modelo.
+              Al superar los 1,000 jugadores activos, migrar a dominio propio y hosting en Hostinger/DonWeb.
+              Al alcanzar ingresos mensuales de $5M+ ARS, escalar a Vercel + Supabase Pro.
+            </p>
+          </div>
+        </div>
+      );
 
       const tabContent = () => {
         if (tab === 'resumen') return renderResumen();
         if (tab === 'mercado') return renderMercado();
         if (tab === 'proyecciones') return renderProyecciones();
         if (tab === 'proyecto') return renderProyecto();
+        if (tab === 'precios') return renderPrecios();
         if (tab === 'tecnologia') return renderTecnologia();
       };
 
@@ -534,6 +694,7 @@ const renderTecnologia = () => (
                      t === 'mercado' ? 'Mercado' : 
                      t === 'proyecciones' ? 'Proyecciones' : 
                      t === 'proyecto' ? 'Proyecto' : 
+                     t === 'precios' ? 'Precios Dinámicos' : 
                      'Tecnología'}
                   </button>
                 ))}
