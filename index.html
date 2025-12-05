@@ -74,7 +74,7 @@
       const [vecinos, setVecinos] = useState(2);
 
       // Pestañas actualizadas
-      const tabs = ['resumen', 'mercado', 'proyecciones', 'proyecto', 'precios', 'comparacion', 'tecnologia'];
+      const tabs = ['resumen', 'mercado', 'proyecciones', 'proyecto', 'precios', 'comparacion', 'emparejamientos', 'tecnologia'];
 
       // === RESUMEN ===
       const renderResumen = () => (
@@ -761,6 +761,102 @@
         );
       };
 
+      // === EMPAREJAMIENTOS INTELIGENTES ===
+      const renderEmparejamientos = () => {
+        return (
+          <div className="space-y-8">
+            <h2 className="text-4xl font-black text-center text-orange-custom">Emparejamientos Inteligentes</h2>
+
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="text-2xl font-bold mb-4">¿Qué es el matchmaking inteligente?</h3>
+              <p className="mb-4">
+                Nuestro sistema de emparejamiento utiliza algoritmos avanzados para formar partidos de pádel de 4 jugadores 
+                de forma <strong>equilibrada, justa y eficiente</strong>, según el perfil, nivel, ubicación y disponibilidad de los usuarios.
+              </p>
+              <p>
+                A diferencia de sistemas simples, nuestro matchmaking considera múltiples variables para crear partidos 
+                donde todos disfruten del juego y se sientan cómodos con su nivel de competencia.
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="text-2xl font-bold mb-4">Casos de Uso del Matchmaking</h3>
+
+              <Accordion title="Caso 1: Tengo 3 jugadores → Busco 1 más">
+                <p>Un jugador crea un grupo de 3 y marca “Busco 1 jugador más”.</p>
+                <ul className="list-disc pl-6 mt-2 space-y-1">
+                  <li>El sistema filtra candidatos por <strong>categoría (±1)</strong>, <strong>ubicación</strong> y <strong>disponibilidad</strong>.</li>
+                  <li>Envía notificaciones push a los mejores candidatos.</li>
+                  <li>El grupo puede ver perfiles, ratings y elegir aceptar/rechazar.</li>
+                </ul>
+              </Accordion>
+
+              <Accordion title="Caso 2: Soy 1 jugador → Busco 3 más">
+                <p>Un jugador suelto busca unirse a un grupo de 4 o formar uno nuevo.</p>
+                <ul className="list-disc pl-6 mt-2 space-y-1">
+                  <li>Se busca un grupo incompleto (2 o 3 jugadores).</li>
+                  <li>O se intenta armar un grupo nuevo con otros 3 usuarios sueltos.</li>
+                  <li>Se prioriza nivel y disponibilidad horaria.</li>
+                </ul>
+              </Accordion>
+
+              <Accordion title="Caso 3: Soy un crew (dupla fija) → Busco otra dupla">
+                <p>Un crew (2 jugadores fijos) busca completar un partido con otro crew.</p>
+                <ul className="list-disc pl-6 mt-2 space-y-1">
+                  <li>Se buscan otros crews o duplas sueltas.</li>
+                  <li>Se prioriza nivel promedio y estilo de juego.</li>
+                  <li>Se notifica a crews objetivo con opción de “Desafiar” o “Aceptar partido amistoso”.</li>
+                </ul>
+              </Accordion>
+
+              <Accordion title="Caso 4: Emparejamiento Automático (IA)">
+                <p>El usuario activa “Quiero jugar ahora” y el sistema le sugiere partidos.</p>
+                <ul className="list-disc pl-6 mt-2 space-y-1">
+                  <li>IA analiza perfil, horarios, nivel y amistades.</li>
+                  <li>Busca partidos compatibles o crea uno nuevo.</li>
+                  <li>Notifica al usuario con opciones personalizadas.</li>
+                </ul>
+              </Accordion>
+
+              <Accordion title="Caso 5: Busco un partido abierto">
+                <p>El usuario navega el feed de partidos disponibles y se une o postula.</p>
+                <ul className="list-disc pl-6 mt-2 space-y-1">
+                  <li>Se filtran partidos por nivel, ubicación y horario.</li>
+                  <li>El usuario puede unirse directamente o esperar aprobación.</li>
+                  <li>El sistema divide costos y coordina QR de acceso.</li>
+                </ul>
+              </Accordion>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="text-2xl font-bold mb-4">Algoritmo de Compatibilidad</h3>
+              <p>El sistema calcula un <strong>score de compatibilidad</strong> entre usuarios o grupos para formar partidos equilibrados:</p>
+              <ul className="list-disc pl-6 mt-4 space-y-2">
+                <li><strong>Nivel de juego:</strong> Diferencia de categoría (0 puntos si es el mismo, -10 por cada categoría de diferencia).</li>
+                <li><strong>Ubicación:</strong> Distancia entre usuarios (cercanía geográfica suma puntos).</li>
+                <li><strong>Horario:</strong> Coincidencia exacta de disponibilidad.</li>
+                <li><strong>Estilo:</strong> Complementariedad (drive con reves, estilo agresivo con defensivo).</li>
+                <li><strong>Historial:</strong> Experiencia previa (si ya jugaron bien juntos).</li>
+                <li><strong>Reputación:</strong> Puntualidad, fair play, comentarios.</li>
+              </ul>
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                <p className="font-mono text-sm">
+                  Score = (Nivel_compatibilidad * 10) + (Ubicación_compatibilidad * 5) + (Horario_exacto * 20) + ...
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
+              <h3 className="text-xl font-bold mb-2">Ventaja Competitiva</h3>
+              <p>
+                Nuestro matchmaking es el primero en Misiones que considera múltiples factores para formar partidos justos y agradables. 
+                Esto mejora la <strong>experiencia de usuario</strong>, <strong>aumenta la retención</strong> y <strong>potencia la ocupación de canchas</strong> en horarios valle.
+              </p>
+            </div>
+          </div>
+        );
+      };
+
       // === TECNOLOGÍA Y ESTRATEGIA DE LANZAMIENTO ===
       const renderTecnologia = () => (
         <div className="space-y-8">
@@ -829,6 +925,7 @@
         if (tab === 'proyecto') return renderProyecto();
         if (tab === 'precios') return renderPrecios();
         if (tab === 'comparacion') return renderComparacion();
+        if (tab === 'emparejamientos') return renderEmparejamientos();
         if (tab === 'tecnologia') return renderTecnologia();
       };
 
@@ -879,6 +976,7 @@
                      t === 'proyecto' ? 'Proyecto' : 
                      t === 'precios' ? 'Precios Dinámicos' : 
                      t === 'comparacion' ? 'Comparación de Modelos' : 
+                     t === 'emparejamientos' ? 'Emparejamientos Inteligentes' : 
                      'Tecnología'}
                   </button>
                 ))}
@@ -897,3 +995,4 @@
   </script>
 </body>
 </html>
+
