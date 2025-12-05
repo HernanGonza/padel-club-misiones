@@ -63,7 +63,6 @@
       const [animarProyecciones, setAnimarProyecciones] = useState(false);
       const [yaCargadoProyecciones, setYaCargadoProyecciones] = useState(false);
       const [anioActivo, setAnioActivo] = useState(1);
-      const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, value: '' });
 
       // Estados para la pestaña de precios dinámicos
       const [precioBase, setPrecioBase] = useState(15000);
@@ -75,7 +74,7 @@
       const [vecinos, setVecinos] = useState(2);
 
       // Pestañas actualizadas
-      const tabs = ['resumen', 'mercado', 'proyecciones', 'proyecto', 'precios', 'tecnologia'];
+      const tabs = ['resumen', 'mercado', 'proyecciones', 'proyecto', 'precios', 'comparacion', 'tecnologia'];
 
       // === RESUMEN ===
       const renderResumen = () => (
@@ -582,6 +581,186 @@
         );
       };
 
+      // === COMPARACIÓN DE MODELOS COMERCIALES ===
+      const renderComparacion = () => {
+        // Datos de ejemplo para un día tipo
+        const ejemploDia = [
+          { hora: "10:00", dem: "Baja", oc: "2/4", fijo: 12000, din: 8400 },
+          { hora: "12:00", dem: "Media", oc: "3/4", fijo: 12000, din: 12000 },
+          { hora: "14:00", dem: "Media", oc: "3/4", fijo: 12000, din: 8400 },
+          { hora: "16:00", dem: "Alta", oc: "4/4", fijo: 12000, din: 13200 },
+          { hora: "18:00", dem: "Muy alta", oc: "4/4", fijo: 12000, din: 15600 },
+          { hora: "20:00", dem: "Muy alta", oc: "4/4", fijo: 12000, din: 15600 },
+          { hora: "22:00", dem: "Baja", oc: "1/4", fijo: 12000, din: 13200 }
+        ];
+
+        const totalFijo = ejemploDia.reduce((acc, h) => acc + h.fijo, 0);
+        const totalDin = ejemploDia.reduce((acc, h) => acc + h.din, 0);
+        const diferencia = totalDin - totalFijo;
+
+        // Máximo valor para normalizar barras
+        const maxValor = Math.max(...ejemploDia.flatMap(h => [h.fijo, h.din]));
+
+        return (
+          <div className="space-y-8 relative">
+            <h2 className="text-4xl font-black text-center text-orange-custom">Comparación de Modelos Comerciales</h2>
+
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="text-2xl font-bold mb-4">Precios Fijos vs. Precios Dinámicos</h3>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-orange-50">
+                    <th className="p-2 text-left">Criterio</th>
+                    <th className="p-2 text-center">Precios Fijos</th>
+                    <th className="p-2 text-center">Precios Dinámicos</th>
+                    <th className="p-2 text-center">¿Quién gana?</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="p-2">Simplicidad</td>
+                    <td className="p-2 text-center">✅ Muy simple</td>
+                    <td className="p-2 text-center">⚠️ Requiere explicación</td>
+                    <td className="p-2 text-center">Fijos</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-2">Transparencia</td>
+                    <td className="p-2 text-center">✅ Total</td>
+                    <td className="p-2 text-center">⚠️ Dinámica</td>
+                    <td className="p-2 text-center">Fijos</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-2">Aumento de ingresos</td>
+                    <td className="p-2 text-center">❌ Limitado</td>
+                    <td className="p-2 text-center">✅ Muy alto en picos</td>
+                    <td className="p-2 text-center">Dinámicos</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-2">Atracción horarios valle</td>
+                    <td className="p-2 text-center">❌ Limitada</td>
+                    <td className="p-2 text-center">✅ Muy alta</td>
+                    <td className="p-2 text-center">Dinámicos</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-2">Competitividad</td>
+                    <td className="p-2 text-center">❌ Igual al resto</td>
+                    <td className="p-2 text-center">✅ Diferenciador</td>
+                    <td className="p-2 text-center">Dinámicos</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-2">Experiencia de usuario</td>
+                    <td className="p-2 text-center">❌ Puede sentirse injusta</td>
+                    <td className="p-2 text-center">✅ Se percibe como justa</td>
+                    <td className="p-2 text-center">Dinámicos</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="text-2xl font-bold mb-4">Ejemplo de Día Tipo</h3>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-orange-50">
+                    <th className="p-2 text-left">Hora</th>
+                    <th className="p-2 text-center">Demanda</th>
+                    <th className="p-2 text-center">Ocupación</th>
+                    <th className="p-2 text-center">Precio Fijo</th>
+                    <th className="p-2 text-center">Precio Dinámico</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ejemploDia.map((h, i) => (
+                    <tr key={i} className="border-b">
+                      <td className="p-2">{h.hora}</td>
+                      <td className="p-2 text-center">{h.dem}</td>
+                      <td className="p-2 text-center">{h.oc}</td>
+                      <td className="p-2 text-center">${h.fijo.toLocaleString()}</td>
+                      <td className="p-2 text-center">${h.din.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-blue-50 p-4 rounded-lg text-center">
+                  <div className="text-2xl font-bold">$84,000</div>
+                  <div className="text-sm">Ingreso total con precios fijos</div>
+                </div>
+                <div className="bg-green-50 p-4 rounded-lg text-center">
+                  <div className="text-2xl font-bold">$91,200</div>
+                  <div className="text-sm">Ingreso total con precios dinámicos</div>
+                </div>
+                <div className="bg-purple-50 p-4 rounded-lg text-center">
+                  <div className="text-2xl font-bold">+$7,200</div>
+                  <div className="text-sm">Diferencia (8.6% más)</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Gráfico de barras */}
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="text-2xl font-bold mb-4">Comparación Visual de Ingresos por Hora</h3>
+              <div className="space-y-4">
+                {ejemploDia.map((h, i) => {
+                  const anchoFijo = (h.fijo / maxValor) * 100;
+                  const anchoDin = (h.din / maxValor) * 100;
+                  return (
+                    <div key={i} className="flex items-center">
+                      <div className="w-16 text-sm text-gray-600">{h.hora}</div>
+                      <div className="flex-1 flex h-8 relative">
+                        {/* Barra fija */}
+                        <div
+                          className="h-full bg-blue-500 rounded-r"
+                          style={{ width: `${anchoFijo}%` }}
+                          onMouseEnter={(e) => {
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            const tooltip = document.getElementById('tooltip-comparacion');
+                            tooltip.style.display = 'block';
+                            tooltip.textContent = `Fijo: $${h.fijo.toLocaleString()}`;
+                            tooltip.style.left = `${rect.left + window.scrollX}px`;
+                            tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
+                          }}
+                          onMouseLeave={() => {
+                            const tooltip = document.getElementById('tooltip-comparacion');
+                            tooltip.style.display = 'none';
+                          }}
+                        ></div>
+                        {/* Barra dinámica superpuesta */}
+                        <div
+                          className="h-full bg-orange-500 rounded-r absolute"
+                          style={{ width: `${anchoDin}%` }}
+                          onMouseEnter={(e) => {
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            const tooltip = document.getElementById('tooltip-comparacion');
+                            tooltip.style.display = 'block';
+                            tooltip.textContent = `Dinámico: $${h.din.toLocaleString()}`;
+                            tooltip.style.left = `${rect.left + window.scrollX}px`;
+                            tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
+                          }}
+                          onMouseLeave={() => {
+                            const tooltip = document.getElementById('tooltip-comparacion');
+                            tooltip.style.display = 'none';
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
+              <h3 className="text-xl font-bold mb-2">Conclusión</h3>
+              <p>
+                Los precios fijos ofrecen simplicidad, pero limitan el potencial de ingresos. 
+                Los precios dinámicos adaptan el valor al mercado real, aumentan la ocupación en horarios valle 
+                y maximizan ingresos en picos, sin sacrificar la equidad. Es la evolución natural del modelo tradicional.
+              </p>
+            </div>
+          </div>
+        );
+      };
+
       // === TECNOLOGÍA Y ESTRATEGIA DE LANZAMIENTO ===
       const renderTecnologia = () => (
         <div className="space-y-8">
@@ -649,6 +828,7 @@
         if (tab === 'proyecciones') return renderProyecciones();
         if (tab === 'proyecto') return renderProyecto();
         if (tab === 'precios') return renderPrecios();
+        if (tab === 'comparacion') return renderComparacion();
         if (tab === 'tecnologia') return renderTecnologia();
       };
 
@@ -668,7 +848,10 @@
       }, [tab, yaCargadoProyecciones]);
 
       return (
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50">
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 relative">
+          {/* Tooltip global para la pestaña de comparación */}
+          <div id="tooltip-comparacion" className="tooltip absolute z-50 hidden"></div>
+
           <nav className="sticky top-0 bg-white shadow-xl border-b-4 border-orange-custom z-50">
             <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
               <div className="flex items-center space-x-4">
@@ -689,12 +872,13 @@
               <div className="flex flex-wrap border-b-2 border-orange-custom">
                 {tabs.map(t => (
                   <button key={t} onClick={() => setTab(t)}
-                    className={`px-5 py-4 font-bold text-lg flex-1 md:flex-none transition ${tab === t ? 'bg-orange-custom text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                    className={`px-4 py-4 font-bold text-base flex-1 md:flex-none transition ${tab === t ? 'bg-orange-custom text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>
                     {t === 'resumen' ? 'Resumen' : 
                      t === 'mercado' ? 'Mercado' : 
                      t === 'proyecciones' ? 'Proyecciones' : 
                      t === 'proyecto' ? 'Proyecto' : 
                      t === 'precios' ? 'Precios Dinámicos' : 
+                     t === 'comparacion' ? 'Comparación de Modelos' : 
                      'Tecnología'}
                   </button>
                 ))}
