@@ -72,9 +72,15 @@
       const [cola, setCola] = useState(1);
       const [historica, setHistorica] = useState(6);
       const [vecinos, setVecinos] = useState(2);
+const [demandaEstimada, setDemandaEstimada] = useState(8);
+const [ocupacionActual, setOcupacionActual] = useState(60);
+  const [diaSemana, setDiaSemana] = useState('viernes');
+  const [hora, setHora] = useState('tarde');
+  const [clima, setClima] = useState('soleado');
+const [canchasTotales, setCanchasTotales] = useState(4);
 
       // Pestañas actualizadas
-      const tabs = ['resumen', 'mercado', 'proyecciones', 'proyecto', 'precios', 'comparacion', 'emparejamientos', 'mvp'];
+      const tabs = ['resumen', 'mercado', 'proyecciones', 'proyecto', 'precios', 'comparacion', 'emparejamientos', 'tecnologia'];
 
       // === RESUMEN ===
       const renderResumen = () => (
@@ -431,336 +437,477 @@
         </div>
       );
 
-      // === PRECIOS DINÁMICOS ===
-      const renderPrecios = () => {
-        // Parámetros internos del algoritmo
-        const NORMALIZADOR = 0.6;
-        const SUAVIZADO = 0.3;
-        const MULTIPLICADOR_MIN = 0.8;
-        const MULTIPLICADOR_MAX = 2.5;
+     // === PRECIOS DINÁMICOS (Interactivo con Sliders y Explicaciones) ===
+// === PRECIOS DINÁMICOS (CORREGIDO) ===
+const renderPrecios = () => {
+  // Parámetros del algoritmo
+  const NORMALIZADOR = 0.6;
+  const SUAVIZADO = 0.3;
+  const MULTIPLICADOR_MIN = 0.7;
+  const MULTIPLICADOR_MAX = 2.0;
 
-        // Estado para suavizado por horario (simplificado como variable local)
-        let Mprevio = 1.0;
+  // Estado local para suavizado (variable temporal)
+  let Mprevio = 1.0;
 
-        // Función principal del algoritmo
-        const calcularPrecio = () => {
-          if (canchas <= 0) return precioBase * MULTIPLICADOR_MAX;
+  // Función principal del algoritmo
+  const calcularPrecio = () => {
+    if (canchas <= 0) return precioBase * MULTIPLICADOR_MAX;
 
-          // Sanitizar datos
-          const dViendo = Math.max(0, viendo || 0);
-          const dIntentando = Math.max(0, intentando || 0);
-          const dCola = Math.max(0, cola || 0);
-          const dHistorica = Math.max(0, historica || 0);
-          const dVecinos = Math.max(0, vecinos || 0);
+    const dViendo = Math.max(0, viendo || 0);
+    const dIntentando = Math.max(0, intentando || 0);
+    const dCola = Math.max(0, cola || 0);
+    const dHistorica = Math.max(0, historica || 0);
+    const dVecinos = Math.max(0, vecinos || 0);
 
-          // Demanda total ponderada
-          const Dtotal = (0.35 * dViendo) + (0.30 * dIntentando) + (0.10 * dCola) + (0.20 * dHistorica) + (0.05 * dVecinos);
+    const Dtotal = (0.35 * dViendo) + (0.30 * dIntentando) + (0.10 * dCola) + (0.20 * dHistorica) + (0.05 * dVecinos);
+    const Oferta = canchas;
+    const R = Dtotal / Oferta;
 
-          // Ratio
-          const R = Dtotal / canchas;
+    let Mcrudo = 1 + (R - 1) * NORMALIZADOR;
+    let Mlimitado = Math.min(Math.max(Mcrudo, MULTIPLICADOR_MIN), MULTIPLICADOR_MAX);
 
-          // Multiplicador crudo
-          let Mcrudo = 1 + (R - 1) * NORMALIZADOR;
+    const M = SUAVIZADO * Mlimitado + (1 - SUAVIZADO) * Mprevio;
+    Mprevio = M;
 
-          // Límites
-          let Mlimitado = Math.min(Math.max(Mcrudo, MULTIPLICADOR_MIN), MULTIPLICADOR_MAX);
+    return precioBase * M;
+  };
 
-          // Suavizado
-          const M = SUAVIZADO * Mlimitado + (1 - SUAVIZADO) * Mprevio;
+  const precioFinal = calcularPrecio();
 
-          // Actualizar Mprevio para la próxima simulación
-          Mprevio = M;
+  // Calcular altura actual basada en el precio final
+  const multiplicadorActual = precioFinal / precioBase;
+  const alturaActual = Math.min(multiplicadorActual * 50, 100);
 
-          // Precio final
-          return precioBase * M;
-        };
+  // Formatear ARS
+  const formatARS = (num) => {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(num);
+  };
 
-        const precioFinal = calcularPrecio();
+  return (
+    <div className="space-y-10">
+      <h2 className="text-4xl font-black text-center text-orange-custom">Precios Dinámicos</h2>
 
-        return (
-          <div className="space-y-8">
-            <h2 className="text-4xl font-black text-center text-orange-custom">Precios Dinámicos</h2>
+      <div className="bg-white p-6 rounded-xl shadow">
+        <h3 className="text-2xl font-bold mb-4">¿Cómo funciona?</h3>
+        <p className="mb-4">
+          Nuestro algoritmo ajusta automáticamente el precio de cada turno según la relación entre 
+          <strong> demanda en tiempo real</strong> y <strong>capacidad disponible (canchas)</strong>.
+        </p>
+        <ul className="list-disc pl-6 mb-4 space-y-2">
+          <li><strong>Demanda total:</strong> Combina usuarios viendo, intentando reservar, en cola, histórico y horarios vecinos</li>
+          <li><strong>Oferta:</strong> Número de canchas disponibles en ese horario</li>
+          <li><strong>Ratio:</strong> Demanda / Oferta → determina si el precio sube o baja</li>
+          <li><strong>Suavizado:</strong> Evita saltos bruscos entre cálculos sucesivos</li>
+          <li><strong>Rango:</strong> Precio final entre 70% y 200% del precio base</li>
+        </ul>
+        <p>
+          Inspirado en modelos de Uber, pero calibrado para el mercado de pádel en Misiones.
+        </p>
+      </div>
 
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="text-2xl font-bold mb-4">¿Cómo funciona?</h3>
-              <p className="mb-4">
-                Nuestro algoritmo ajusta automáticamente el precio de cada turno según la relación entre 
-                <strong> demanda en tiempo real</strong> y <strong>capacidad disponible</strong>.
-              </p>
-              <ul className="list-disc pl-6 mb-4 space-y-2">
-                <li><strong>Demanda total:</strong> Combina usuarios viendo, intentando reservar, en cola, histórico y horarios vecinos</li>
-                <li><strong>Suavizado:</strong> Evita saltos bruscos entre cálculos sucesivos</li>
-                <li><strong>Rango:</strong> Precio final entre 80% y 250% del precio base</li>
-              </ul>
-              <p>
-                Inspirado en modelos de Uber, pero calibrado para el mercado de pádel en Misiones.
-              </p>
+           
+
+      {/* Panel de Sliders */}
+      <div className="bg-gray-50 p-6 rounded-xl">
+        <h3 className="text-2xl font-bold mb-6">Probador del Algoritmo</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <label className="block text-sm font-medium mb-2">Precio Base por Hora (ARS)</label>
+            <input
+              type="range"
+              min="5000"
+              max="30000"
+              value={precioBase}
+              onChange={(e) => setPrecioBase(Number(e.target.value))}
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>$5,000</span>
+              <span>{formatARS(precioBase)}</span>
+              <span>$30,000</span>
             </div>
-
-            <div className="bg-gray-50 p-6 rounded-xl">
-              <h3 className="text-2xl font-bold mb-4">Probador del Algoritmo</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Precio Base (ARS)</label>
-                  <input
-                    type="number"
-                    value={precioBase}
-                    onChange={(e) => setPrecioBase(Number(e.target.value))}
-                    className="w-full p-2 border border-gray-300 rounded"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Canchas Disponibles</label>
-                  <input
-                    type="number"
-                    value={canchas}
-                    onChange={(e) => setCanchas(Number(e.target.value))}
-                    className="w-full p-2 border border-gray-300 rounded"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Usuarios viendo horario</label>
-                  <input
-                    type="number"
-                    value={viendo}
-                    onChange={(e) => setViendo(Number(e.target.value))}
-                    className="w-full p-2 border border-gray-300 rounded"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Usuarios intentando reservar</label>
-                  <input
-                    type="number"
-                    value={intentando}
-                    onChange={(e) => setIntentando(Number(e.target.value))}
-                    className="w-full p-2 border border-gray-300 rounded"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Usuarios en cola</label>
-                  <input
-                    type="number"
-                    value={cola}
-                    onChange={(e) => setCola(Number(e.target.value))}
-                    className="w-full p-2 border border-gray-300 rounded"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Demanda histórica</label>
-                  <input
-                    type="number"
-                    value={historica}
-                    onChange={(e) => setHistorica(Number(e.target.value))}
-                    className="w-full p-2 border border-gray-300 rounded"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Demanda horarios vecinos</label>
-                  <input
-                    type="number"
-                    value={vecinos}
-                    onChange={(e) => setVecinos(Number(e.target.value))}
-                    className="w-full p-2 border border-gray-300 rounded"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <h4 className="font-bold mb-2">Precio Calculado</h4>
-                  <div className="text-3xl font-black text-green-600">
-                    {new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(precioFinal)}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
-              <p className="text-sm">
-                <strong>Parámetros del algoritmo:</strong> Normalizador = 0.6 | Suavizado = 0.3 | Rango: 0.8x a 2.5x del precio base
-              </p>
-            </div>
+            <p className="text-xs text-gray-600 mt-1">Precio habitual en horarios valle.</p>
           </div>
-        );
-      };
-
-      // === COMPARACIÓN DE MODELOS COMERCIALES ===
-      const renderComparacion = () => {
-        // Datos de ejemplo para un día tipo
-        const ejemploDia = [
-          { hora: "10:00", dem: "Baja", oc: "2/4", fijo: 12000, din: 8400 },
-          { hora: "12:00", dem: "Media", oc: "3/4", fijo: 12000, din: 12000 },
-          { hora: "14:00", dem: "Media", oc: "3/4", fijo: 12000, din: 8400 },
-          { hora: "16:00", dem: "Alta", oc: "4/4", fijo: 12000, din: 13200 },
-          { hora: "18:00", dem: "Muy alta", oc: "4/4", fijo: 12000, din: 15600 },
-          { hora: "20:00", dem: "Muy alta", oc: "4/4", fijo: 12000, din: 15600 },
-          { hora: "22:00", dem: "Baja", oc: "1/4", fijo: 12000, din: 13200 }
-        ];
-
-        const totalFijo = ejemploDia.reduce((acc, h) => acc + h.fijo, 0);
-        const totalDin = ejemploDia.reduce((acc, h) => acc + h.din, 0);
-        const diferencia = totalDin - totalFijo;
-
-        // Máximo valor para normalizar barras
-        const maxValor = Math.max(...ejemploDia.flatMap(h => [h.fijo, h.din]));
-
-        return (
-          <div className="space-y-8 relative">
-            <h2 className="text-4xl font-black text-center text-orange-custom">Comparación de Modelos Comerciales</h2>
-
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="text-2xl font-bold mb-4">Precios Fijos vs. Precios Dinámicos</h3>
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-orange-50">
-                    <th className="p-2 text-left">Criterio</th>
-                    <th className="p-2 text-center">Precios Fijos</th>
-                    <th className="p-2 text-center">Precios Dinámicos</th>
-                    <th className="p-2 text-center">¿Quién gana?</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b">
-                    <td className="p-2">Simplicidad</td>
-                    <td className="p-2 text-center">✅ Muy simple</td>
-                    <td className="p-2 text-center">⚠️ Requiere explicación</td>
-                    <td className="p-2 text-center">Fijos</td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-2">Transparencia</td>
-                    <td className="p-2 text-center">✅ Total</td>
-                    <td className="p-2 text-center">⚠️ Dinámica</td>
-                    <td className="p-2 text-center">Fijos</td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-2">Aumento de ingresos</td>
-                    <td className="p-2 text-center">❌ Limitado</td>
-                    <td className="p-2 text-center">✅ Muy alto en picos</td>
-                    <td className="p-2 text-center">Dinámicos</td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-2">Atracción horarios valle</td>
-                    <td className="p-2 text-center">❌ Limitada</td>
-                    <td className="p-2 text-center">✅ Muy alta</td>
-                    <td className="p-2 text-center">Dinámicos</td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-2">Competitividad</td>
-                    <td className="p-2 text-center">❌ Igual al resto</td>
-                    <td className="p-2 text-center">✅ Diferenciador</td>
-                    <td className="p-2 text-center">Dinámicos</td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-2">Experiencia de usuario</td>
-                    <td className="p-2 text-center">❌ Puede sentirse injusta</td>
-                    <td className="p-2 text-center">✅ Se percibe como justa</td>
-                    <td className="p-2 text-center">Dinámicos</td>
-                  </tr>
-                </tbody>
-              </table>
+          <div>
+            <label className="block text-sm font-medium mb-2">Canchas Disponibles en el Horario</label>
+            <input
+              type="range"
+              min="1"
+              max="20"
+              value={canchas}
+              onChange={(e) => setCanchas(Number(e.target.value))}
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>1</span>
+              <span>{canchas}</span>
+              <span>20</span>
             </div>
-
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="text-2xl font-bold mb-4">Ejemplo de Día Tipo</h3>
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-orange-50">
-                    <th className="p-2 text-left">Hora</th>
-                    <th className="p-2 text-center">Demanda</th>
-                    <th className="p-2 text-center">Ocupación</th>
-                    <th className="p-2 text-center">Precio Fijo</th>
-                    <th className="p-2 text-center">Precio Dinámico</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ejemploDia.map((h, i) => (
-                    <tr key={i} className="border-b">
-                      <td className="p-2">{h.hora}</td>
-                      <td className="p-2 text-center">{h.dem}</td>
-                      <td className="p-2 text-center">{h.oc}</td>
-                      <td className="p-2 text-center">${h.fijo.toLocaleString()}</td>
-                      <td className="p-2 text-center">${h.din.toLocaleString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-blue-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold">$84,000</div>
-                  <div className="text-sm">Ingreso total con precios fijos</div>
-                </div>
-                <div className="bg-green-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold">$91,200</div>
-                  <div className="text-sm">Ingreso total con precios dinámicos</div>
-                </div>
-                <div className="bg-purple-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold">+$7,200</div>
-                  <div className="text-sm">Diferencia (8.6% más)</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Gráfico de barras */}
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="text-2xl font-bold mb-4">Comparación Visual de Ingresos por Hora</h3>
-              <div className="space-y-4">
-                {ejemploDia.map((h, i) => {
-                  const anchoFijo = (h.fijo / maxValor) * 100;
-                  const anchoDin = (h.din / maxValor) * 100;
-                  return (
-                    <div key={i} className="flex items-center">
-                      <div className="w-16 text-sm text-gray-600">{h.hora}</div>
-                      <div className="flex-1 flex gap-1 h-8 relative">
-                        {/* Barra fija */}
-                        <div
-                          className="h-full bg-blue-500 rounded"
-                          style={{ width: `${anchoFijo}%` }}
-                          onMouseEnter={(e) => {
-                            const rect = e.currentTarget.getBoundingClientRect();
-                            const tooltip = document.getElementById('tooltip-comparacion');
-                            tooltip.style.display = 'block';
-                            tooltip.textContent = `Fijo: $${h.fijo.toLocaleString()}`;
-                            tooltip.style.left = `${rect.left + window.scrollX}px`;
-                            tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
-                          }}
-                          onMouseLeave={() => {
-                            const tooltip = document.getElementById('tooltip-comparacion');
-                            tooltip.style.display = 'none';
-                          }}
-                        ></div>
-                        {/* Barra dinámica */}
-                        <div
-                          className="h-full bg-orange-500 rounded"
-                          style={{ width: `${anchoDin}%` }}
-                          onMouseEnter={(e) => {
-                            const rect = e.currentTarget.getBoundingClientRect();
-                            const tooltip = document.getElementById('tooltip-comparacion');
-                            tooltip.style.display = 'block';
-                            tooltip.textContent = `Dinámico: $${h.din.toLocaleString()}`;
-                            tooltip.style.left = `${rect.left + window.scrollX}px`;
-                            tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
-                          }}
-                          onMouseLeave={() => {
-                            const tooltip = document.getElementById('tooltip-comparacion');
-                            tooltip.style.display = 'none';
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
-              <h3 className="text-xl font-bold mb-2">Conclusión</h3>
-              <p>
-                Los precios fijos ofrecen simplicidad, pero limitan el potencial de ingresos. 
-                Los precios dinámicos adaptan el valor al mercado real, aumentan la ocupación en horarios valle 
-                y maximizan ingresos en picos, sin sacrificar la equidad. Es la evolución natural del modelo tradicional.
-              </p>
-            </div>
+            <p className="text-xs text-gray-600 mt-1">Mayor oferta = menor precio.</p>
           </div>
-        );
-      };
+          <div>
+            <label className="block text-sm font-medium mb-2">Usuarios viendo este horario ahora</label>
+            <input
+              type="range"
+              min="0"
+              max="30"
+              value={viendo}
+              onChange={(e) => setViendo(Number(e.target.value))}
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>0</span>
+              <span>{viendo}</span>
+              <span>30</span>
+            </div>
+            <p className="text-xs text-gray-600 mt-1">Indica interés inmediato.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Usuarios intentando reservar ahora</label>
+            <input
+              type="range"
+              min="0"
+              max="20"
+              value={intentando}
+              onChange={(e) => setIntentando(Number(e.target.value))}
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>0</span>
+              <span>{intentando}</span>
+              <span>20</span>
+            </div>
+            <p className="text-xs text-gray-600 mt-1">Aumenta la presión sobre la oferta.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Usuarios en cola para este horario</label>
+            <input
+              type="range"
+              min="0"
+              max="15"
+              value={cola}
+              onChange={(e) => setCola(Number(e.target.value))}
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>0</span>
+              <span>{cola}</span>
+              <span>15</span>
+            </div>
+            <p className="text-xs text-gray-600 mt-1">Demanda acumulada.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Demanda histórica promedio en este horario</label>
+            <input
+              type="range"
+              min="0"
+              max="20"
+              value={historica}
+              onChange={(e) => setHistorica(Number(e.target.value))}
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>0</span>
+              <span>{historica}</span>
+              <span>20</span>
+            </div>
+            <p className="text-xs text-gray-600 mt-1">Basado en datos pasados.</p>
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium mb-2">Demanda en horarios vecinos (±1 hora)</label>
+            <input
+              type="range"
+              min="0"
+              max="15"
+              value={vecinos}
+              onChange={(e) => setVecinos(Number(e.target.value))}
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>0</span>
+              <span>{vecinos}</span>
+              <span>15</span>
+            </div>
+            <p className="text-xs text-gray-600 mt-1">Si otros horarios están llenos, este puede volverse más atractivo.</p>
+          </div>
+        </div>
 
+        <div className="mt-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
+          <h4 className="text-xl font-bold mb-2">Precio Calculado en Vivo</h4>
+          <div className="text-4xl font-black text-green-600">
+            {formatARS(precioFinal)}
+          </div>
+          <p className="mt-2 text-gray-700">
+            Este precio se actualiza en tiempo real según los parámetros que ajustes arriba.
+          </p>
+        </div>
+      </div>
+
+      <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
+        <p className="text-sm">
+          <strong>Parámetros del algoritmo:</strong> Normalizador = 0.6 | Suavizado = 0.3 | Rango: 0.7x a 2.0x del precio base
+        </p>
+      </div>
+    </div>
+  );
+};
+
+      // === COMPARACIÓN DE MODELOS COMERCIALES (CORREGIDA) ===
+const renderComparacion = () => {
+  // Estados para la pestaña (deben estar en App.js)
+  // const [precioBase, setPrecioBase] = useState(12000);
+  // const [canchasTotales, setCanchasTotales] = useState(4); // <-- Añadir este estado
+
+  // Datos de ejemplo para un día tipo
+  // NOTA: Ahora la ocupación (ej: "2/4") debe reflejar la cantidad total de canchas
+  const ejemploDia = [
+    { hora: "10:00", dem: "Baja", oc: `1/${canchasTotales}`, fijo: precioBase, din: precioBase * 0.70 }, // 70% del fijo
+    { hora: "12:00", dem: "Media", oc: `2/${canchasTotales}`, fijo: precioBase, din: precioBase },
+    { hora: "14:00", dem: "Media", oc: `2/${canchasTotales}`, fijo: precioBase, din: precioBase * 0.70 },
+    { hora: "16:00", dem: "Alta", oc: `${canchasTotales}/${canchasTotales}`, fijo: precioBase, din: precioBase * 1.10 },
+    { hora: "18:00", dem: "Muy alta", oc: `${canchasTotales}/${canchasTotales}`, fijo: precioBase, din: precioBase * 1.30 },
+    { hora: "20:00", dem: "Muy alta", oc: `${canchasTotales}/${canchasTotales}`, fijo: precioBase, din: precioBase * 1.30 },
+    { hora: "22:00", dem: "Baja", oc: `0/${canchasTotales}`, fijo: precioBase, din: precioBase * 1.10 }
+  ];
+
+  // Cálculos basados en el precio base actual y canchas totales
+  const totalFijo = ejemploDia.reduce((acc, h) => {
+    const [ocupadas, total] = h.oc.split('/').map(Number);
+    return acc + (h.fijo * ocupadas); // Precio base * canchas ocupadas en ese horario
+  }, 0);
+
+  const totalDin = ejemploDia.reduce((acc, h) => {
+    const [ocupadas, total] = h.oc.split('/').map(Number);
+    return acc + (h.din * ocupadas); // Precio dinámico * canchas ocupadas en ese horario
+  }, 0);
+
+  const diferencia = totalDin - totalFijo;
+  const porcentajeDiferencia = totalFijo !== 0 ? ((diferencia / totalFijo) * 100).toFixed(2) : 0;
+  const signo = diferencia >= 0 ? '+' : '';
+
+  // Máximo valor para normalizar barras (gráfico)
+  const maxValor = Math.max(...ejemploDia.flatMap(h => [h.fijo, h.din]));
+
+  // Formatear número ARS
+  const formatARS = (num) => {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(num);
+  };
+
+  return (
+    <div className="space-y-8 relative">
+      <h2 className="text-4xl font-black text-center text-orange-custom">Comparación de Modelos Comerciales</h2>
+
+      {/* Inputs para cambiar precio base y canchas totales */}
+      <div className="bg-white p-6 rounded-xl shadow">
+        <h3 className="text-2xl font-bold mb-4 text-orange-custom">Parámetros del Simulador</h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-lg font-bold mb-2">
+              Precio Base por Hora de Cancha (ARS)
+            </label>
+            <input
+              type="number"
+              value={precioBase}
+              onChange={(e) => setPrecioBase(Number(e.target.value))}
+              className="w-full p-3 text-lg border-2 border-orange-custom rounded-lg focus:ring-2 focus:ring-orange-300"
+              min="1000"
+              step="1000"
+            />
+          </div>
+          <div>
+            <label className="block text-lg font-bold mb-2">
+              Número Total de Canchas en el Complejo
+            </label>
+            <input
+              type="number"
+              value={canchasTotales}
+              onChange={(e) => setCanchasTotales(Number(e.target.value))}
+              className="w-full p-3 text-lg border-2 border-orange-custom rounded-lg focus:ring-2 focus:ring-orange-300"
+              min="1"
+              step="1"
+            />
+          </div>
+        </div>
+        <p className="mt-3 text-sm text-gray-600">
+          Cambia estos valores y observa cómo se actualizan la tabla y el gráfico.
+        </p>
+      </div>
+
+      {/* Tabla comparativa */}
+      <div className="bg-white p-6 rounded-xl shadow">
+        <h3 className="text-2xl font-bold mb-4">Precios Fijos vs. Precios Dinámicos</h3>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-orange-50">
+              <th className="p-2 text-left">Criterio</th>
+              <th className="p-2 text-center">Precios Fijos</th>
+              <th className="p-2 text-center">Precios Dinámicos</th>
+              <th className="p-2 text-center">¿Quién gana?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="border-b">
+              <td className="p-2">Simplicidad</td>
+              <td className="p-2 text-center">✅ Muy simple</td>
+              <td className="p-2 text-center">⚠️ Requiere explicación</td>
+              <td className="p-2 text-center">Fijos</td>
+            </tr>
+            <tr className="border-b">
+              <td className="p-2">Transparencia</td>
+              <td className="p-2 text-center">✅ Total</td>
+              <td className="p-2 text-center">⚠️ Dinámica</td>
+              <td className="p-2 text-center">Fijos</td>
+            </tr>
+            <tr className="border-b">
+              <td className="p-2">Aumento de ingresos</td>
+              <td className="p-2 text-center">❌ Limitado</td>
+              <td className="p-2 text-center">✅ Muy alto en picos</td>
+              <td className="p-2 text-center">Dinámicos</td>
+            </tr>
+            <tr className="border-b">
+              <td className="p-2">Atracción horarios valle</td>
+              <td className="p-2 text-center">❌ Limitada</td>
+              <td className="p-2 text-center">✅ Muy alta</td>
+              <td className="p-2 text-center">Dinámicos</td>
+            </tr>
+            <tr className="border-b">
+              <td className="p-2">Competitividad</td>
+              <td className="p-2 text-center">❌ Igual al resto</td>
+              <td className="p-2 text-center">✅ Diferenciador</td>
+              <td className="p-2 text-center">Dinámicos</td>
+            </tr>
+            <tr className="border-b">
+              <td className="p-2">Experiencia de usuario</td>
+              <td className="p-2 text-center">❌ Puede sentirse injusta</td>
+              <td className="p-2 text-center">✅ Se percibe como justa</td>
+              <td className="p-2 text-center">Dinámicos</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Tabla de ejemplo con valores dinámicos */}
+      <div className="bg-white p-6 rounded-xl shadow">
+        <h3 className="text-xl font-bold mb-4">Ejemplo de Día Tipo (Precio Base: {formatARS(precioBase)}, Canchas Totales: {canchasTotales})</h3>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-orange-50">
+              <th className="p-2 text-left">Hora</th>
+              <th className="p-2 text-center">Demanda</th>
+              <th className="p-2 text-center">Ocupación</th>
+              <th className="p-2 text-center">Precio Fijo (ARS/hora/cancha)</th>
+              <th className="p-2 text-center">Precio Dinámico (ARS/hora/cancha)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {ejemploDia.map((h, i) => {
+              const [ocupadas, total] = h.oc.split('/');
+              return (
+                <tr key={i} className="border-b">
+                  <td className="p-2">{h.hora}</td>
+                  <td className="p-2 text-center">{h.dem}</td>
+                  <td className="p-2 text-center">{h.oc}</td>
+                  <td className="p-2 text-center">{formatARS(h.fijo)}</td>
+                  <td className="p-2 text-center">{formatARS(h.din)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-blue-50 p-4 rounded-lg text-center">
+            <div className="text-2xl font-black text-blue-600">{formatARS(totalFijo)}</div>
+            <div className="text-sm">Ingreso total con precios fijos</div>
+          </div>
+          <div className="bg-green-50 p-4 rounded-lg text-center">
+            <div className="text-2xl font-black text-green-600">{formatARS(totalDin)}</div>
+            <div className="text-sm">Ingreso total con precios dinámicos</div>
+          </div>
+          <div className={`p-4 rounded-lg text-center ${diferencia >= 0 ? 'bg-purple-50' : 'bg-red-50'}`}>
+            <div className={`text-2xl font-black ${diferencia >= 0 ? 'text-purple-600' : 'text-red-600'}`}>{signo}{formatARS(Math.abs(diferencia))}</div>
+            <div className="text-sm">Diferencia ({porcentajeDiferencia}% más con dinámicos)</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Gráfico de barras */}
+      <div className="bg-white p-6 rounded-xl shadow">
+        <h3 className="text-2xl font-bold mb-4">Comparación Visual de Ingresos por Hora</h3>
+        <div className="space-y-4">
+          {ejemploDia.map((h, i) => {
+            const anchoFijo = (h.fijo / maxValor) * 100;
+            const anchoDin = (h.din / maxValor) * 100;
+            const [ocupadas, total] = h.oc.split('/');
+
+            return (
+              <div key={i} className="flex items-center">
+                <div className="w-16 text-sm text-gray-600">{h.hora}</div>
+                <div className="flex-1 flex gap-1 h-8">
+                  {/* Barra fija */}
+                  <div
+                    className="h-full bg-blue-500 rounded"
+                    style={{ width: `${anchoFijo}%` }}
+                    onMouseEnter={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const tooltip = document.getElementById('tooltip-comparacion');
+                      if (tooltip) {
+                        tooltip.style.display = 'block';
+                        tooltip.textContent = `Fijo: ${formatARS(h.fijo)}`;
+                        tooltip.style.left = `${rect.left + window.scrollX}px`;
+                        tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      const tooltip = document.getElementById('tooltip-comparacion');
+                      if (tooltip) tooltip.style.display = 'none';
+                    }}
+                  ></div>
+                  {/* Barra dinámica */}
+                  <div
+                    className="h-full bg-orange-500 rounded"
+                    style={{ width: `${anchoDin}%` }}
+                    onMouseEnter={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const tooltip = document.getElementById('tooltip-comparacion');
+                      if (tooltip) {
+                        tooltip.style.display = 'block';
+                        tooltip.textContent = `Dinámico: ${formatARS(h.din)}`;
+                        tooltip.style.left = `${rect.left + window.scrollX}px`;
+                        tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      const tooltip = document.getElementById('tooltip-comparacion');
+                      if (tooltip) tooltip.style.display = 'none';
+                    }}
+                  ></div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
+        <p className="text-sm">
+          <strong>Conclusión:</strong> Los precios fijos ofrecen simplicidad, pero limitan el potencial de ingresos. 
+          Los precios dinámicos adaptan el valor al mercado real (oferta y demanda), aumentan la ocupación en horarios valle 
+          y maximizan ingresos en picos, sin sacrificar la equidad. Es la evolución natural del modelo tradicional.
+        </p>
+      </div>
+    </div>
+  );
+};
       // === EMPAREJAMIENTOS INTELIGENTES ===
       const renderEmparejamientos = () => {
         return (
@@ -857,83 +1004,66 @@
         );
       };
 
-      // === MVP Y ROADMAP ===
-      const renderMvp = () => {
-        return (
-          <div className="space-y-8">
-            <h2 className="text-4xl font-black text-center text-orange-custom">MVP y Roadmap de Desarrollo</h2>
+      // === TECNOLOGÍA Y ESTRATEGIA DE LANZAMIENTO ===
+      const renderTecnologia = () => (
+        <div className="space-y-8">
+          <h2 className="text-4xl font-black text-center text-orange-custom">Tecnología y Estrategia de Lanzamiento</h2>
 
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="text-2xl font-bold mb-4">Fase 1: MVP – “Reserva y Matchmaking Básico” (Meses 1-3)</h3>
-              <p className="mb-4">
-                Lanzar una versión funcional que permita a los usuarios:
-              </p>
-              <ul className="list-disc pl-6 mb-4 space-y-2">
-                <li><strong>Buscar complejos</strong> en su zona.</li>
-                <li><strong>Buscar canchas disponibles para una fecha y hora específica</strong> en todos los complejos.</li>
-                <li><strong>Ver todas las canchas disponibles</strong> en esa franja horaria.</li>
-                <li><strong>Reservar una cancha</strong> (individuales o duplas).</li>
-                <li><strong>Buscar compañeros</strong> si solo tiene 1 o 2 jugadores.</li>
-                <li><strong>Pagar la reserva</strong>.</li>
-              </ul>
-              <p>
-                Permitir a los complejos:
-              </p>
-              <ul className="list-disc pl-6 mt-2 space-y-2">
-                <li><strong>Gestionar su disponibilidad</strong> (calendario).</li>
-                <li><strong>Recibir reservas</strong>.</li>
-              </ul>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="text-2xl font-bold mb-4">Fase 2: “Social y Gamificación” (Meses 4-6)</h3>
-              <p className="mb-4">
-                Aumentar la retención y el engagement con funcionalidades sociales y mecánicas de juego.
-              </p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Perfiles detallados (nivel real, estilo, estadísticas).</li>
-                <li>Sistema de amigos y crews (duplas fijas).</li>
-                <li>Feed social (resultados, fotos, check-ins).</li>
-                <li>Misiones diarias/semanales (XP, badges).</li>
-                <li>Sistema de reputación (puntualidad, fair play).</li>
-              </ul>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="text-2xl font-bold mb-4">Fase 3: “Inteligencia y Automatización” (Meses 7-9)</h3>
-              <p className="mb-4">
-                Hacer la plataforma más inteligente y eficiente.
-              </p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Emparejamiento automático con IA.</li>
-                <li>Precios dinámicos avanzados (clima, ocupación, demanda).</li>
-                <li>Sistema de torneos y clases.</li>
-                <li>Reservas avanzadas (recurrentes, lista de espera).</li>
-              </ul>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="text-2xl font-bold mb-4">Fase 4: “Marketplace y Monetización” (Meses 10-12)</h3>
-              <p className="mb-4">
-                Convertir la plataforma en un ecosistema completo de pádel, generando nuevas fuentes de ingreso.
-              </p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Marketplace integrado (nuevos y usados).</li>
-                <li>Compra/venta entre usuarios.</li>
-                <li>Sistema de créditos y premios.</li>
-                <li>Publicidad segmentada.</li>
-              </ul>
-            </div>
-
-            <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
-              <h3 className="text-xl font-bold mb-2">Estrategia de Desarrollo</h3>
-              <p>
-                <strong>Iterativo e incremental:</strong> Cada fase entrega valor al usuario. Validación constante. Enfocado en el problema principal. UI/UX intuitiva. Escalabilidad en mente.
-              </p>
-            </div>
+          {/* Opción 1: MVP GRATIS */}
+          <div className="bg-white p-6 rounded-xl shadow">
+            <h3 className="text-2xl font-bold mb-4 text-orange-custom">OptionsResolver 1: MVP 100% Gratis (Meses 1-2)</h3>
+            <ul className="space-y-2">
+              <li>• <strong>Dominio:</strong> Usar subdominio gratis (ej: `padel-club-misiones.github.io`)</li>
+              <li>• <strong>Hosting web:</strong> GitHub Pages (gratis, HTTPS incluido)</li>
+              <li>• <strong>Backend:</strong> Supabase (plan gratuito: 500MB DB, 1GB storage, 2M requests/mes)</li>
+              <li>• <strong>App móvil:</strong> No se desarrolla aún; la web es 100% responsive</li>
+              <li>• <strong>Costo total:</strong> <span className="font-bold">$0 USD/mes</span></li>
+            </ul>
+            <p className="mt-3 text-sm">
+              Ideal para validar flujos, conseguir los primeros 3 complejos y 500 jugadores.
+            </p>
           </div>
-        );
-      };
+
+          {/* Opción 2: Hosting económico LATAM */}
+          <div className="bg-white p-6 rounded-xl shadow">
+            <h3 className="text-2xl font-bold mb-4 text-orange-custom">Opción 2: Hosting en Argentina/LATAM (Desde Mes 3)</h3>
+            <ul className="space-y-2">
+              <li>• <strong>Dominio propio:</strong> `.com.ar` o `.com` (~$300–$800 ARS/año en DonWeb, Hostinger o Nic.ar)</li>
+              <li>• <strong>Hosting web:</strong> Hostinger, DonWeb o Vercel (plan básico ~$200–$500 ARS/mes)</li>
+              <li>• <strong>Soporte técnico local:</strong> Ideal si no hay equipo técnico</li>
+              <li>• <strong>Constructores de páginas:</strong> Si no hay desarrolladores, se puede armar una landing con WordPress + Elementor o Webflow</li>
+              <li>• <strong>Integraciones:</strong> Mercado Pago, Google Maps, WhatsApp</li>
+            </ul>
+            <p className="mt-3 text-sm">
+              Permite tener marca profesional y mejor posicionamiento SEO desde el inicio.
+            </p>
+          </div>
+
+          {/* Opción 3: Escalado profesional (Mes 6+) */}
+          <div className="bg-white p-6 rounded-xl shadow">
+            <h3 className="text-2xl font-bold mb-4 text-orange-custom">Opción 3: Escalado Profesional (Mes 6 en adelante)</h3>
+            <ul className="space-y-2">
+              <li>• <strong>Frontend Web:</strong> Vercel Pro ($20 USD/mes)</li>
+              <li>• <strong>Backend:</strong> Supabase Pro ($25 USD/mes)</li>
+              <li>• <strong>App móvil:</strong> Expo EAS ($29 USD/mes)</li>
+              <li>• <strong>Monitoreo:</strong> Sentry + PostHog (gratis en inicio, luego ~$20 USD/mes)</li>
+              <li>• <strong>Costo total estimado:</strong> <span className="font-bold">~$230 USD/mes</span> (equivalente a ~$200,000 ARS/mes)</li>
+            </ul>
+            <p className="mt-3 text-sm">
+              Infraestructura 100% serverless, escalable a 100K usuarios sin cambios arquitectónicos.
+            </p>
+          </div>
+
+          {/* Recomendación final */}
+          <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
+            <p className="text-sm">
+              <strong>Recomendación:</strong> Empezar con la Opción 1 (gratis) para validar el modelo.
+              Al superar los 1,000 jugadores activos, migrar a dominio propio y hosting en Hostinger/DonWeb.
+              Al alcanzar ingresos mensuales de $5M+ ARS, escalar a Vercel + Supabase Pro.
+            </p>
+          </div>
+        </div>
+      );
 
       const tabContent = () => {
         if (tab === 'resumen') return renderResumen();
@@ -943,7 +1073,7 @@
         if (tab === 'precios') return renderPrecios();
         if (tab === 'comparacion') return renderComparacion();
         if (tab === 'emparejamientos') return renderEmparejamientos();
-        if (tab === 'mvp') return renderMvp();
+        if (tab === 'tecnologia') return renderTecnologia();
       };
 
       // Activar animación cuando se entra a "proyecciones"
@@ -994,7 +1124,7 @@
                      t === 'precios' ? 'Precios Dinámicos' : 
                      t === 'comparacion' ? 'Comparación de Modelos' : 
                      t === 'emparejamientos' ? 'Emparejamientos Inteligentes' : 
-                     'MVP y Roadmap'}
+                     'Tecnología'}
                   </button>
                 ))}
               </div>
