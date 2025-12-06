@@ -697,58 +697,57 @@
               </div>
             </div>
 
-            {/* Gráfico de barras */}
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="text-2xl font-bold mb-4">Comparación Visual de Ingresos por Hora</h3>
-              <div className="space-y-4">
-                {ejemploDia.map((h, i) => {
-                  const anchoFijo = (h.fijo / maxValor) * 100;
-                  const anchoDin = (h.din / maxValor) * 100;
-                  return (
-                    <div key={i} className="flex items-center">
-                      <div className="w-16 text-sm text-gray-600">{h.hora}</div>
-                      <div className="flex-1 flex h-8 relative">
-                        {/* Barra fija */}
-                        <div
-                          className="h-full bg-blue-500 rounded-r"
-                          style={{ width: `${anchoFijo}%` }}
-                          onMouseEnter={(e) => {
-                            const rect = e.currentTarget.getBoundingClientRect();
-                            const tooltip = document.getElementById('tooltip-comparacion');
-                            tooltip.style.display = 'block';
-                            tooltip.textContent = `Fijo: $${h.fijo.toLocaleString()}`;
-                            tooltip.style.left = `${rect.left + window.scrollX}px`;
-                            tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
-                          }}
-                          onMouseLeave={() => {
-                            const tooltip = document.getElementById('tooltip-comparacion');
-                            tooltip.style.display = 'none';
-                          }}
-                        ></div>
-                        {/* Barra dinámica superpuesta */}
-                        <div
-                          className="h-full bg-orange-500 rounded-r absolute"
-                          style={{ width: `${anchoDin}%` }}
-                          onMouseEnter={(e) => {
-                            const rect = e.currentTarget.getBoundingClientRect();
-                            const tooltip = document.getElementById('tooltip-comparacion');
-                            tooltip.style.display = 'block';
-                            tooltip.textContent = `Dinámico: $${h.din.toLocaleString()}`;
-                            tooltip.style.left = `${rect.left + window.scrollX}px`;
-                            tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
-                          }}
-                          onMouseLeave={() => {
-                            const tooltip = document.getElementById('tooltip-comparacion');
-                            tooltip.style.display = 'none';
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
+           {/* Gráfico de barras */}
+<div className="bg-white p-6 rounded-xl shadow">
+  <h3 className="text-2xl font-bold mb-4">Comparación Visual de Ingresos por Hora</h3>
+  <div className="space-y-4">
+    {ejemploDia.map((h, i) => {
+      const anchoFijo = (h.fijo / maxValor) * 100;
+      const anchoDin = (h.din / maxValor) * 100;
+      return (
+        <div key={i} className="flex items-center">
+          <div className="w-16 text-sm text-gray-600">{h.hora}</div>
+          <div className="flex-1 flex gap-1 h-8"> {/* ← CONTENEDOR DIVIDIDO */}
+            {/* Barra fija */}
+            <div
+              className="h-full bg-blue-500 rounded"
+              style={{ width: `${anchoFijo}%` }}
+              onMouseEnter={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const tooltip = document.getElementById('tooltip-comparacion');
+                tooltip.style.display = 'block';
+                tooltip.textContent = `Fijo: $${h.fijo.toLocaleString()}`;
+                tooltip.style.left = `${rect.left + window.scrollX}px`;
+                tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
+              }}
+              onMouseLeave={() => {
+                const tooltip = document.getElementById('tooltip-comparacion');
+                tooltip.style.display = 'none';
+              }}
+            ></div>
+            {/* Barra dinámica */}
+            <div
+              className="h-full bg-orange-500 rounded"
+              style={{ width: `${anchoDin}%` }}
+              onMouseEnter={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const tooltip = document.getElementById('tooltip-comparacion');
+                tooltip.style.display = 'block';
+                tooltip.textContent = `Dinámico: $${h.din.toLocaleString()}`;
+                tooltip.style.left = `${rect.left + window.scrollX}px`;
+                tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
+              }}
+              onMouseLeave={() => {
+                const tooltip = document.getElementById('tooltip-comparacion');
+                tooltip.style.display = 'none';
+              }}
+            ></div>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</div>
             <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
               <h3 className="text-xl font-bold mb-2">Conclusión</h3>
               <p>
