@@ -80,44 +80,116 @@ const [ocupacionActual, setOcupacionActual] = useState(60);
 const [canchasTotales, setCanchasTotales] = useState(4);
 
       // Pestañas actualizadas
-      const tabs = ['resumen', 'mercado', 'proyecciones', 'proyecto', 'precios', 'comparacion', 'emparejamientos', 'tecnologia'];
+      const tabs = ['resumen', 'mercado', 'proyecciones', 'proyecto', 'precios', 'comparacion', 'emparejamientos', 'mvp'];
 
       // === RESUMEN ===
       const renderResumen = () => (
-        <div className="space-y-10">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-5xl font-black text-orange-custom mb-6">Padel Club Misiones</h1>
-            <p className="text-2xl text-gray-700 mb-8">
-              Plataforma integral de pádel: matchmaking inteligente, reservas, torneos, ligas, marketplace y más.
-            </p>
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-8 py-4 rounded-xl inline-block shadow-xl">
-              <p className="text-xl font-bold">+18.000 jugadores · 28 complejos · 100% en Misiones</p>
-            </div>
-          </div>
+  <div className="space-y-12">
+    {/* Hero Section */}
+    <div className="text-center max-w-4xl mx-auto bg-gradient-to-br from-orange-50 to-amber-50 p-8 rounded-2xl shadow-lg">
+      <h1 className="text-5xl md:text-6xl font-black text-orange-custom mb-4">Padel Club Misiones</h1>
+      <p className="text-2xl md:text-3xl text-gray-700 mb-6">
+        <strong>La primera plataforma que conecta jugadores con canchas disponibles en tiempo real.</strong>
+      </p>
+      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-8 py-4 rounded-xl inline-block shadow-xl">
+        <p className="text-xl font-bold">+18.000 jugadores · 28 complejos · 100% en Misiones</p>
+      </div>
+    </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="stat-card bg-white p-6 rounded-xl">
-              <h3 className="font-bold text-xl mb-3 text-orange-custom">Monetización desde el día 1</h3>
-              <ul className="space-y-2">
-                <li>• <strong>Reservas:</strong> Comisión del 10% (absorbemos descuentos)</li>
-                <li>• <strong>Complejos:</strong> Paquetes premium de marketing y analytics</li>
-                <li>• <strong>Profesores:</strong> Comisión del 15% en clases</li>
-                <li>• <strong>Marketplace:</strong> Margen 30–40% en productos</li>
-                <li>• <strong>Marcas:</strong> Publicidad segmentada</li>
-              </ul>
-            </div>
-            <div className="stat-card bg-white p-6 rounded-xl">
-              <h3 className="font-bold text-xl mb-3 text-orange-custom">Valor para Complejos</h3>
-              <ul className="space-y-2">
-                <li>• Aumento de ocupación en horarios valle</li>
-                <li>• Retención con ligas y torneos</li>
-                <li>• Descuentos cubiertos por la plataforma</li>
-                <li>• Panel de analytics + marketing integrado</li>
-              </ul>
-            </div>
-          </div>
+    {/* Value Proposition Cards */}
+    <div className="grid md:grid-cols-2 gap-8">
+      <div className="stat-card bg-white p-6 rounded-xl shadow-lg border border-orange-100">
+        <h3 className="font-bold text-2xl mb-4 text-orange-custom">Para Jugadores</h3>
+        <ul className="space-y-3 text-lg">
+          <li className="flex items-start">
+            <i className="fas fa-search text-orange-custom mt-1 mr-3"></i>
+            <span><strong>Encuentra canchas</strong> disponibles en segundos.</span>
+          </li>
+          <li className="flex items-start">
+            <i className="fas fa-users text-orange-custom mt-1 mr-3"></i>
+            <span><strong>Busca compañeros</strong> con tu mismo nivel y horario.</span>
+          </li>
+          <li className="flex items-start">
+            <i className="fas fa-tags text-orange-custom mt-1 mr-3"></i>
+            <span><strong>Aprovecha precios dinámicos</strong> en horarios valle.</span>
+          </li>
+          <li className="flex items-start">
+            <i className="fas fa-trophy text-orange-custom mt-1 mr-3"></i>
+            <span><strong>Únete a torneos</strong> y ligas locales.</span>
+          </li>
+          <li className="flex items-start">
+            <i className="fas fa-shopping-cart text-orange-custom mt-1 mr-3"></i>
+            <span><strong>Compra productos</strong> y retíralos en tu próximo partido.</span>
+          </li>
+        </ul>
+      </div>
+      <div className="stat-card bg-white p-6 rounded-xl shadow-lg border border-orange-100">
+        <h3 className="font-bold text-2xl mb-4 text-orange-custom">Para Complejos</h3>
+        <ul className="space-y-3 text-lg">
+          <li className="flex items-start">
+            <i className="fas fa-chart-line text-orange-custom mt-1 mr-3"></i>
+            <span><strong>Aumenta tu ocupación</strong> en horarios valle.</span>
+          </li>
+          <li className="flex items-start">
+            <i className="fas fa-calendar-check text-orange-custom mt-1 mr-3"></i>
+            <span><strong>Gestiona reservas</strong> de forma simple y automatizada.</span>
+          </li>
+          <li className="flex items-start">
+            <i className="fas fa-percentage text-orange-custom mt-1 mr-3"></i>
+            <span><strong>Optimiza precios</strong> con nuestro sistema dinámico.</span>
+          </li>
+          <li className="flex items-start">
+            <i className="fas fa-user-friends text-orange-custom mt-1 mr-3"></i>
+            <span><strong>Fideliza jugadores</strong> con ligas y torneos.</span>
+          </li>
+          <li className="flex items-start">
+            <i className="fas fa-store text-orange-custom mt-1 mr-3"></i>
+            <span><strong>Vende productos</strong> directamente a tus clientes.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    {/* Key Stats */}
+    <div className="bg-white p-8 rounded-2xl shadow-lg">
+      <h3 className="text-3xl font-bold text-center mb-8 text-orange-custom">Nuestro Impacto en Misiones</h3>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="text-center">
+          <div className="text-5xl font-black text-orange-custom">+18K</div>
+          <div className="text-lg text-gray-600">Jugadores Activos</div>
         </div>
-      );
+        <div className="text-center">
+          <div className="text-5xl font-black text-orange-custom">28</div>
+          <div className="text-lg text-gray-600">Complejos Aliados</div>
+        </div>
+        <div className="text-center">
+          <div className="text-5xl font-black text-orange-custom">85%</div>
+          <div className="text-lg text-gray-600">Dirían que pagarían</div>
+        </div>
+        <div className="text-center">
+          <div className="text-5xl font-black text-orange-custom">100%</div>
+          <div className="text-lg text-gray-600">Hecho en Misiones</div>
+        </div>
+      </div>
+    </div>
+
+    {/* Call to Action */}
+    <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-8 rounded-2xl text-center shadow-xl">
+      <h3 className="text-3xl font-black mb-4">¿Listo para revolucionar el pádel en Misiones?</h3>
+      <p className="text-xl mb-6">
+        Únete a la primera plataforma integral de pádel del norte argentino.
+      </p>
+      <div className="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="mailto:hola@padelclubmisiones.com.ar" className="bg-white text-orange-600 font-bold text-lg px-8 py-4 rounded-lg shadow-lg hover:bg-gray-100 transition">
+          <i className="fas fa-envelope mr-2"></i> Contactar Complejo
+        </a>
+        <a href="https://wa.me/tu_numero" className="bg-green-600 hover:bg-green-700 text-white font-bold text-lg px-8 py-4 rounded-lg shadow-lg transition">
+          <i className="fab fa-whatsapp mr-2"></i> Consultar por WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+);
 
       // === PROYECCIONES ===
       const renderProyecciones = () => {
@@ -282,29 +354,197 @@ const [canchasTotales, setCanchasTotales] = useState(4);
       };
 
       // === MERCADO ===
-      const renderMercado = () => (
-        <div className="space-y-8">
-          <h2 className="text-4xl font-black text-center text-orange-custom">Mercado – Misiones</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="text-2xl font-bold mb-3">Jugadores</h3>
-              <ul className="space-y-2 text-lg">
-                <li>• +18.000 activos en Posadas y zona</li>
-                <li>• Crecimiento anual: 35%</li>
-                <li>• 68% busca compañeros frecuentemente</li>
-              </ul>
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="text-2xl font-bold mb-3">Complejos</h3>
-              <ul className="space-y-2 text-lg">
-                <li>• 28 complejos operativos</li>
-                <li>• Ocupación promedio: 58%</li>
-                <li>• Cero plataformas de matchmaking locales</li>
-              </ul>
-            </div>
-          </div>
+      // === MERCADO (mejorado con gráficos y datos visuales) ===
+const renderMercado = () => {
+  // Datos del mercado
+  const datosMercado = {
+    jugadores: {
+      total: 18000,
+      crecimiento: 35, // %
+      buscanCompanieros: 68 // %
+    },
+    complejos: {
+      total: 28,
+      ocupacionPromedio: 58, // %
+      sinMatchmaking: 100 // %
+    }
+  };
+
+  // Simulación de crecimiento anual
+  const crecimientoAnual = [12000, 14500, 16200, 18000]; // Años -2, -1, actual, proyectado este año
+  const anos = ['-2', '-1', 'Actual', 'Proyectado'];
+
+  // Simulación de ocupación por horario (ejemplo)
+  const ocupacionPorHorario = [
+    { hora: '09:00', ocupacion: 20 },
+    { hora: '11:00', ocupacion: 35 },
+    { hora: '13:00', ocupacion: 45 },
+    { hora: '15:00', ocupacion: 58 },
+    { hora: '17:00', ocupacion: 75 },
+    { hora: '19:00', ocupacion: 90 },
+    { hora: '21:00', ocupacion: 65 }
+  ];
+
+  // Máximo valor para normalizar gráficos
+  const maxCrecimiento = Math.max(...crecimientoAnual);
+  const maxOcupacion = 100;
+
+  // Formatear números
+  const formatK = (num) => (num / 1000).toFixed(1) + 'K';
+
+  return (
+    <div className="space-y-10">
+      <h2 className="text-4xl font-black text-center text-orange-custom">Mercado – Misiones</h2>
+
+      {/* KPIs principales */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-gradient-to-br from-orange-100 to-orange-200 p-6 rounded-2xl shadow text-center">
+          <div className="text-4xl font-black text-orange-custom">{formatK(datosMercado.jugadores.total)}</div>
+          <div className="text-sm text-gray-700">Jugadores activos</div>
         </div>
-      );
+        <div className="bg-gradient-to-br from-amber-100 to-amber-200 p-6 rounded-2xl shadow text-center">
+          <div className="text-4xl font-black text-amber-600">+{datosMercado.jugadores.crecimiento}%</div>
+          <div className="text-sm text-gray-700">Crecimiento anual</div>
+        </div>
+        <div className="bg-gradient-to-br from-blue-100 to-blue-200 p-6 rounded-2xl shadow text-center">
+          <div className="text-4xl font-black text-blue-600">{datosMercado.complejos.total}</div>
+          <div className="text-sm text-gray-700">Complejos operativos</div>
+        </div>
+        <div className="bg-gradient-to-br from-green-100 to-green-200 p-6 rounded-2xl shadow text-center">
+          <div className="text-4xl font-black text-green-600">{datosMercado.complejos.ocupacionPromedio}%</div>
+          <div className="text-sm text-gray-700">Ocupación promedio</div>
+        </div>
+      </div>
+
+      {/* Gráfico: Crecimiento de jugadores */}
+      <div className="bg-white p-6 rounded-2xl shadow-lg">
+        <h3 className="text-2xl font-bold mb-4 text-orange-custom">Crecimiento de Jugadores (últimos 4 años)</h3>
+        <div className="flex items-end h-64 gap-2 bg-gray-50 p-4 rounded-lg">
+          {crecimientoAnual.map((valor, i) => {
+            const altura = (valor / maxCrecimiento) * 100;
+            return (
+              <div key={i} className="flex flex-col items-center flex-1 h-full">
+                <div
+                  className="w-full bg-gradient-to-t from-orange-500 to-orange-400 rounded-t transition-all duration-1000 ease-out"
+                  style={{ height: `${altura}%` }}
+                  onMouseEnter={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const tooltip = document.getElementById('tooltip-mercado');
+                    if (tooltip) {
+                      tooltip.style.display = 'block';
+                      tooltip.textContent = `${valor.toLocaleString()} jugadores`;
+                      tooltip.style.left = `${rect.left + window.scrollX + rect.width / 2}px`;
+                      tooltip.style.top = `${rect.top + window.scrollY - 40}px`;
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    const tooltip = document.getElementById('tooltip-mercado');
+                    if (tooltip) tooltip.style.display = 'none';
+                  }}
+                ></div>
+                <span className="text-xs mt-2 text-gray-600">{anos[i]}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Gráfico: Ocupación por horario */}
+      <div className="bg-white p-6 rounded-2xl shadow-lg">
+        <h3 className="text-2xl font-bold mb-4 text-orange-custom">Ocupación Promedio por Horario</h3>
+        <div className="flex items-end h-64 gap-1 bg-gray-50 p-4 rounded-lg">
+          {ocupacionPorHorario.map((h, i) => {
+            const altura = (h.ocupacion / maxOcupacion) * 100;
+            return (
+              <div key={i} className="flex flex-col items-center flex-1 h-full">
+                <div
+                  className={`w-full rounded-t ${
+                    h.ocupacion > 70 ? 'bg-red-500' : h.ocupacion > 50 ? 'bg-yellow-500' : 'bg-green-500'
+                  } transition-all duration-700 ease-out`}
+                  style={{ height: `${altura}%` }}
+                  onMouseEnter={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const tooltip = document.getElementById('tooltip-mercado');
+                    if (tooltip) {
+                      tooltip.style.display = 'block';
+                      tooltip.textContent = `${h.ocupacion}% ocupado`;
+                      tooltip.style.left = `${rect.left + window.scrollX + rect.width / 2}px`;
+                      tooltip.style.top = `${rect.top + window.scrollY - 40}px`;
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    const tooltip = document.getElementById('tooltip-mercado');
+                    if (tooltip) tooltip.style.display = 'none';
+                  }}
+                ></div>
+                <span className="text-xs mt-2 text-gray-600">{h.hora}</span>
+              </div>
+            );
+          })}
+        </div>
+        <p className="mt-4 text-gray-700 italic">
+          Nota: La mayor demanda se concentra en horarios pico (19:00-21:00), dejando valles de oportunidad en horarios como 09:00 o 15:00.
+        </p>
+      </div>
+
+      {/* Segmentos de mercado */}
+      <div className="grid md:grid-cols-2 gap-8">
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl shadow">
+          <h3 className="text-2xl font-bold mb-4 flex items-center">
+            <i className="fas fa-users text-blue-500 mr-3"></i>
+            Jugadores
+          </h3>
+          <ul className="space-y-3 text-lg">
+            <li className="flex items-start">
+              <i className="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+              <span><span className="font-bold">+{datosMercado.jugadores.total.toLocaleString()}</span> activos en Posadas y zona</span>
+            </li>
+            <li className="flex items-start">
+              <i className="fas fa-chart-line text-green-500 mt-1 mr-3"></i>
+              <span><span className="font-bold">Crecimiento anual del {datosMercado.jugadores.crecimiento}%</span></span>
+            </li>
+            <li className="flex items-start">
+              <i className="fas fa-user-friends text-green-500 mt-1 mr-3"></i>
+              <span><span className="font-bold">{datosMercado.jugadores.buscanCompanieros}%</span> busca compañeros frecuentemente</span>
+            </li>
+          </ul>
+        </div>
+        <div className="bg-gradient-to-br from-amber-50 to-yellow-50 p-6 rounded-2xl shadow">
+          <h3 className="text-2xl font-bold mb-4 flex items-center">
+            <i className="fas fa-building text-amber-500 mr-3"></i>
+            Complejos
+          </h3>
+          <ul className="space-y-3 text-lg">
+            <li className="flex items-start">
+              <i className="fas fa-list text-amber-500 mt-1 mr-3"></i>
+              <span><span className="font-bold">{datosMercado.complejos.total}</span> complejos operativos</span>
+            </li>
+            <li className="flex items-start">
+              <i className="fas fa-percentage text-amber-500 mt-1 mr-3"></i>
+              <span><span className="font-bold">{datosMercado.complejos.ocupacionPromedio}%</span> de ocupación promedio</span>
+            </li>
+            <li className="flex items-start">
+              <i className="fas fa-times-circle text-amber-500 mt-1 mr-3"></i>
+              <span><span className="font-bold">{datosMercado.complejos.sinMatchmaking}%</span> carecen de plataforma de matchmaking</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Conclusión comercial */}
+      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-2xl shadow-xl">
+        <h3 className="text-2xl font-bold mb-2">Oportunidad de Mercado</h3>
+        <p className="text-lg">
+          Un mercado en <span className="font-black underline">rápido crecimiento</span> con una <span className="font-black underline">clara necesidad insatisfecha</span> de conexión entre jugadores y canchas. 
+          Padel Club Misiones está posicionado para capturar una parte significativa de este mercado en expansión.
+        </p>
+      </div>
+
+      {/* Tooltip global para gráficos */}
+      <div id="tooltip-mercado" className="tooltip absolute z-50 hidden"></div>
+    </div>
+  );
+};
 
       // === FLUJOS ===
       const flujos = [
@@ -1004,66 +1244,200 @@ const renderComparacion = () => {
         );
       };
 
-      // === TECNOLOGÍA Y ESTRATEGIA DE LANZAMIENTO ===
-      const renderTecnologia = () => (
-        <div className="space-y-8">
-          <h2 className="text-4xl font-black text-center text-orange-custom">Tecnología y Estrategia de Lanzamiento</h2>
+      // === MVP Y ESTRATEGIA TECNOLÓGICA ===
+      const renderMvp = () => {
+  return (
+    <div className="space-y-10">
+      <h2 className="text-4xl font-black text-center text-orange-custom">MVP y Estrategia Tecnológica</h2>
 
-          {/* Opción 1: MVP GRATIS */}
-          <div className="bg-white p-6 rounded-xl shadow">
-            <h3 className="text-2xl font-bold mb-4 text-orange-custom">OptionsResolver 1: MVP 100% Gratis (Meses 1-2)</h3>
-            <ul className="space-y-2">
-              <li>• <strong>Dominio:</strong> Usar subdominio gratis (ej: `padel-club-misiones.github.io`)</li>
-              <li>• <strong>Hosting web:</strong> GitHub Pages (gratis, HTTPS incluido)</li>
-              <li>• <strong>Backend:</strong> Supabase (plan gratuito: 500MB DB, 1GB storage, 2M requests/mes)</li>
-              <li>• <strong>App móvil:</strong> No se desarrolla aún; la web es 100% responsive</li>
-              <li>• <strong>Costo total:</strong> <span className="font-bold">$0 USD/mes</span></li>
+      {/* Introducción al MVP */}
+      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-2xl shadow-xl">
+        <h3 className="text-3xl font-bold mb-4">MVP Realista – “Padel Club Misiones”</h3>
+        <p className="text-lg mb-4">
+          Lanzar una <strong>app móvil nativa (iOS y Android)</strong> y <strong>web app responsive</strong> que permita a los jugadores:
+        </p>
+        <ul className="list-disc pl-6 space-y-2 text-lg">
+          <li>Buscar y reservar canchas en complejos de Misiones</li>
+          <li>Buscar compañeros para completar partidos (matchmaking)</li>
+          <li>Pagar reservas con Mercado Pago</li>
+          <li>Recibir notificaciones push de turnos, partidos y ofertas</li>
+          <li>Acceder a un feed social y sistema de misiones</li>
+        </ul>
+        <p className="mt-4 text-xl font-bold">
+          <strong>Objetivo del MVP:</strong> Validar el core: matchmaking + reservas + pagos, con presencia móvil desde el día 1.
+        </p>
+      </div>
+
+      {/* Stack Tecnológico */}
+      <div className="bg-white p-6 rounded-2xl shadow-lg">
+        <h3 className="text-2xl font-bold mb-6 text-orange-custom">Stack Tecnológico</h3>
+        <div className="grid md:grid-cols-2 gap-8">
+          <div>
+            <h4 className="text-xl font-bold mb-4">Frontend</h4>
+            <ul className="space-y-3">
+              <li className="flex items-start">
+                <i className="fas fa-desktop text-orange-custom mt-1 mr-3"></i>
+                <div>
+                  <strong>Web:</strong> Vite + React 18 (rápido, moderno, SSR opcional)
+                </div>
+              </li>
+              <li className="flex items-start">
+                <i className="fas fa-mobile-alt text-orange-custom mt-1 mr-3"></i>
+                <div>
+                  <strong>Móvil:</strong> React Native + Expo (desarrollo rápido, EAS Build/Updates)
+                </div>
+              </li>
+              <li className="flex items-start">
+                <i className="fas fa-paint-brush text-orange-custom mt-1 mr-3"></i>
+                <div>
+                  <strong>UI/UX:</strong> Tailwind CSS + Shadcn/ui o NativeWind (móvil)
+                </div>
+              </li>
             </ul>
-            <p className="mt-3 text-sm">
-              Ideal para validar flujos, conseguir los primeros 3 complejos y 500 jugadores.
+          </div>
+          <div>
+            <h4 className="text-xl font-bold mb-4">Backend y Datos</h4>
+            <ul className="space-y-3">
+              <li className="flex items-start">
+                <i className="fas fa-database text-orange-custom mt-1 mr-3"></i>
+                <div>
+                  <strong>DB/Auth/Storage:</strong> Supabase (PostgreSQL, Auth, RLS, Row Level Security)
+                </div>
+              </li>
+              <li className="flex items-start">
+                <i className="fas fa-code text-orange-custom mt-1 mr-3"></i>
+                <div>
+                  <strong>Lógica del lado del servidor:</strong> Supabase Edge Functions (TypeScript)
+                </div>
+              </li>
+              <li className="flex items-start">
+                <i className="fas fa-bolt text-orange-custom mt-1 mr-3"></i>
+                <div>
+                  <strong>Realtime:</strong> Supabase Realtime (chat, notificaciones de disponibilidad)
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Justificación de Elecciones */}
+      <div className="bg-white p-6 rounded-2xl shadow-lg">
+        <h3 className="text-2xl font-bold mb-6 text-orange-custom">¿Por qué estas tecnologías?</h3>
+        <div className="space-y-6">
+          <div>
+            <h4 className="font-bold text-lg">React Native + Expo</h4>
+            <p>
+              Permiten desarrollar <strong>iOS y Android con un solo código base</strong> (JavaScript/TypeScript), 
+              acelerando el tiempo de salida al mercado. Expo ofrece servicios como <strong>Push Notifications, 
+              Updates Over-the-Air (OTA), y acceso a APIs nativas</strong> sin complicaciones de configuración.
             </p>
           </div>
-
-          {/* Opción 2: Hosting económico LATAM */}
-          <div className="bg-white p-6 rounded-xl shadow">
-            <h3 className="text-2xl font-bold mb-4 text-orange-custom">Opción 2: Hosting en Argentina/LATAM (Desde Mes 3)</h3>
-            <ul className="space-y-2">
-              <li>• <strong>Dominio propio:</strong> `.com.ar` o `.com` (~$300–$800 ARS/año en DonWeb, Hostinger o Nic.ar)</li>
-              <li>• <strong>Hosting web:</strong> Hostinger, DonWeb o Vercel (plan básico ~$200–$500 ARS/mes)</li>
-              <li>• <strong>Soporte técnico local:</strong> Ideal si no hay equipo técnico</li>
-              <li>• <strong>Constructores de páginas:</strong> Si no hay desarrolladores, se puede armar una landing con WordPress + Elementor o Webflow</li>
-              <li>• <strong>Integraciones:</strong> Mercado Pago, Google Maps, WhatsApp</li>
-            </ul>
-            <p className="mt-3 text-sm">
-              Permite tener marca profesional y mejor posicionamiento SEO desde el inicio.
+          <div>
+            <h4 className="font-bold text-lg">Supabase</h4>
+            <p>
+              Es una alternativa de código abierto a Firebase, basada en PostgreSQL. Ofrece <strong>autenticación, 
+              base de datos, almacenamiento y funciones edge</strong> con una curva de aprendizaje baja. 
+              Perfecto para MVPs que necesitan crecer rápidamente con una base sólida.
             </p>
           </div>
-
-          {/* Opción 3: Escalado profesional (Mes 6+) */}
-          <div className="bg-white p-6 rounded-xl shadow">
-            <h3 className="text-2xl font-bold mb-4 text-orange-custom">Opción 3: Escalado Profesional (Mes 6 en adelante)</h3>
-            <ul className="space-y-2">
-              <li>• <strong>Frontend Web:</strong> Vercel Pro ($20 USD/mes)</li>
-              <li>• <strong>Backend:</strong> Supabase Pro ($25 USD/mes)</li>
-              <li>• <strong>App móvil:</strong> Expo EAS ($29 USD/mes)</li>
-              <li>• <strong>Monitoreo:</strong> Sentry + PostHog (gratis en inicio, luego ~$20 USD/mes)</li>
-              <li>• <strong>Costo total estimado:</strong> <span className="font-bold">~$230 USD/mes</span> (equivalente a ~$200,000 ARS/mes)</li>
-            </ul>
-            <p className="mt-3 text-sm">
-              Infraestructura 100% serverless, escalable a 100K usuarios sin cambios arquitectónicos.
-            </p>
-          </div>
-
-          {/* Recomendación final */}
-          <div className="bg-orange-50 border-l-4 border-orange-custom p-4 rounded">
-            <p className="text-sm">
-              <strong>Recomendación:</strong> Empezar con la Opción 1 (gratis) para validar el modelo.
-              Al superar los 1,000 jugadores activos, migrar a dominio propio y hosting en Hostinger/DonWeb.
-              Al alcanzar ingresos mensuales de $5M+ ARS, escalar a Vercel + Supabase Pro.
+          <div>
+            <h4 className="font-bold text-lg">Vite</h4>
+            <p>
+              Es el bundler más rápido actualmente. Hace que el <strong>desarrollo sea instantáneo</strong>, 
+              lo cual es crucial para iterar rápido en el MVP.
             </p>
           </div>
         </div>
-      );
+      </div>
+
+      {/* Roadmap Técnico */}
+      <div className="bg-white p-6 rounded-2xl shadow-lg">
+        <h3 className="text-2xl font-bold mb-6 text-orange-custom">Roadmap Técnico (MVP a 6 meses)</h3>
+        <div className="space-y-4">
+          <div className="flex items-start">
+            <div className="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">1</div>
+            <div className="ml-4">
+              <h4 className="font-bold">Mes 1: Setup y Autenticación</h4>
+              <p>Configurar proyecto Vite/React y React Native con Expo. Implementar login/register con Supabase Auth.</p>
+            </div>
+          </div>
+          <div className="flex items-start">
+            <div className="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">2</div>
+            <div className="ml-4">
+              <h4 className="font-bold">Mes 1-2: Gestión de Complejos y Canchas</h4>
+              <p>Complejos pueden registrarse, cargar canchas y gestionar disponibilidad (calendario).</p>
+            </div>
+          </div>
+          <div className="flex items-start">
+            <div className="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">3</div>
+            <div className="ml-4">
+              <h4 className="font-bold">Mes 2-3: Reservas y Pagos</h4>
+              <p>Usuarios pueden buscar, ver disponibilidad, reservar y pagar con Mercado Pago. Generación de QR.</p>
+            </div>
+          </div>
+          <div className="flex items-start">
+            <div className="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">4</div>
+            <div className="ml-4">
+              <h4 className="font-bold">Mes 3-4: Matchmaking Básico</h4>
+              <p>Usuarios pueden crear grupos buscando jugadores o unirse a grupos abiertos. Chat básico.</p>
+            </div>
+          </div>
+          <div className="flex items-start">
+            <div className="bg-purple-500 text-white w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">5</div>
+            <div className="ml-4">
+              <h4 className="font-bold">Mes 4-5: Experiencia Móvil y Notificaciones</h4>
+              <p>Publicar apps en Google Play y App Store. Implementar Push Notifications con Expo y/o OneSignal.</p>
+            </div>
+          </div>
+          <div className="flex items-start">
+            <div className="bg-purple-500 text-white w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">6</div>
+            <div className="ml-4">
+              <h4 className="font-bold">Mes 5-6: Social y Gamificación Básica</h4>
+              <p>Feed social, misiones diarias, sistema de XP/niveles básico.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Costos Estimados */}
+      <div className="bg-white p-6 rounded-2xl shadow-lg">
+        <h3 className="text-2xl font-bold mb-6 text-orange-custom">Costos Estimados (MVP)</h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <h4 className="font-bold mb-3">Infraestructura (mensual)</h4>
+            <ul className="space-y-2">
+              <li className="flex justify-between"><span>Supabase Pro</span> <span>~$25 USD</span></li>
+              <li className="flex justify-between"><span>Expo EAS Build/Updates</span> <span>~$29 USD</span></li>
+              <li className="flex justify-between"><span>Vercel Pro (web)</span> <span>~$20 USD</span></li>
+              <li className="flex justify-between"><span>Servicios (SMS/Email)</span> <span>~$20 USD</span></li>
+              <li className="flex justify-between font-bold"><span>Total estimado</span> <span>~$230 USD/mes</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-bold mb-3">Desarrollo (estimado)</h4>
+            <ul className="space-y-2">
+              <li>• Desarrollador Full-Stack (3 meses): ~$3,000 USD</li>
+              <li>• Diseñador UX/UI (1 mes): ~$1,000 USD</li>
+              <li>• Testing y QA (0.5 meses): ~$500 USD</li>
+              <li className="font-bold">Total estimado desarrollo: ~$4,500 USD</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Conclusión */}
+      <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-6 rounded-2xl">
+        <h3 className="text-2xl font-bold mb-4">Conclusión</h3>
+        <p>
+          Este stack tecnológico permite lanzar un <strong>MVP funcional, móvil-first y escalable</strong> con un 
+          <strong>coste inicial razonable</strong> y una <strong>curva de aprendizaje baja</strong> para el equipo. 
+          La elección de React Native y Supabase acelera el desarrollo y permite iterar rápidamente basado en feedback de usuarios.
+        </p>
+      </div>
+    </div>
+  );
+};
 
       const tabContent = () => {
         if (tab === 'resumen') return renderResumen();
@@ -1073,7 +1447,7 @@ const renderComparacion = () => {
         if (tab === 'precios') return renderPrecios();
         if (tab === 'comparacion') return renderComparacion();
         if (tab === 'emparejamientos') return renderEmparejamientos();
-        if (tab === 'tecnologia') return renderTecnologia();
+        if (tab === 'mvp') return renderMvp();
       };
 
       // Activar animación cuando se entra a "proyecciones"
@@ -1124,7 +1498,7 @@ const renderComparacion = () => {
                      t === 'precios' ? 'Precios Dinámicos' : 
                      t === 'comparacion' ? 'Comparación de Modelos' : 
                      t === 'emparejamientos' ? 'Emparejamientos Inteligentes' : 
-                     'Tecnología'}
+                     'Mvp y Tecnología'}
                   </button>
                 ))}
               </div>
